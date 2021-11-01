@@ -129,12 +129,36 @@ TBD : IPv4, coap://, ...
 
 ## Neighbor Discovery Protocol (NDP)
 
-IPv6 hosts do not require DHCP to get access to the default gateway. {{!RFC4861}} can also be used to advertise the MUD URL.
+IPv6 hosts do not require DHCP to get access to the default gateway.
+Using NDP {{!RFC4861}} and Stateless Address Autoconfiguration (SLAAC) {{!RFC4862}}, nodes can configure global addresses on their own based on prefixes contained in NDP Router Advertisements (RAs).
+Therefore, DHCPv6 is typically not necessary for IPv6 hosts, which is a problem for the distribution of MUD URLs for these kinds of devices.
 
-TBD : Figure out how these work
-- Neighbor Solicitation (type 135)
-- Neighbor Advertisement (type 136)
-- Redirect (type 137)
+To solve this issue, this document introduces a new option for the NDP which makes it possible to include a MUD URL in Router Solicitations, which can be used for prompting Routers to generate RAs.
+This option has the following format:
+
+~~~~
+0                   1
+0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|      Type     |    Length   |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|                             |
++          MUDstring          |
+|                             |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+Fields:
+
+Type:                   TBD38
+
+Length:                 8-bit unsigned integer. Contains the
+                        length of the MUDstring in octets.
+
+MUDstring:              String containing a MUD URL as defined
+                        in section 10 of {{!RFC8520}}.
+                        MUST NOT exceed 254 Bytes.
+~~~~
+{: #fig-ndp-mud title='MUD URL Option' align="left"}
 
 ### NDP on 6LoWPANs
 
