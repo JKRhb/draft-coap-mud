@@ -178,7 +178,7 @@ Things can expose MUDs as any other resource. MUD Managers can send a GET reques
 
 ## Discovery
 
-### Resource Directory 
+### Resource Directory
 
 By using {{?I-D.ietf-core-resource-directory}}, devices can register a MUD file on the Resource Directory and use it as a MUD repository too. Making it discoverable with the usual RD Lookup steps.
 
@@ -207,7 +207,7 @@ REQ: GET coap://rd.company.com/rd-lookup/res?rt=mud
 
 RES: 2.05 Content
      Content-Format: TBD123456 (application/coral+cbor@identity)
-     
+
      rd-item <coap://[2001:db8:3::101]/mud/box> { rt "mud" }
      rd-item <coap://[2001:db8:3::102]/mud/switch> { rt "mud" }
      rd-item <coap://[2001:db8:3::102]/mud/lock> { rt "mud" }
@@ -248,10 +248,10 @@ In CoRAL ({{?I-D.ietf-core-coral}}, {{?I-D.hartke-t2trg-coral-reef}}):
 ~~~
 REQ: GET coap://[2001:db8:3::123]:5683/.well-known/core?rt=mud
      Accept: TBD123456 (application/coral+cbor@identity)
-     
+
 RES: 2.05 Content
      Content-Format: TBD123456 (application/coral+cbor@identity)
-     
+
      rd-item </mud/light> { rt "mud" }
 ~~~
 
