@@ -1,7 +1,7 @@
 ---
 title: Using MUD on CoAP environments
 abbrev: MUD and CoAP
-docname: draft-jimenez-t2trg-mud-coap-00
+docname: draft-jimenez-t2trg-mud-coap-latest
 category: info
 
 ipr: trust200902
