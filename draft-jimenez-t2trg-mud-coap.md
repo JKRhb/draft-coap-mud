@@ -27,23 +27,40 @@ author:
     email: jaime@iki.fi
 
 --- abstract
-This document provides some guidelines on how to add Manufacturer Usage Descriptions (MUD) to CoAP environments. We propose the use of URLs using the "coaps://" scheme and the hosting of the MUD files on the endpoints themselves.
+This document provides some guidelines on how to add Manufacturer Usage Descriptions (MUD) to constrained environments.
+We propose allowing the use of MUD URLs using the "coaps://", "coaps+tcp://", and "coaps+ws://" schemes and additional mechanisms for emitting the URLs.
 
 --- middle
 
 # Introduction
 
-Manufacturer Usage Descriptions (MUDs) have been specified in {{!RFC8520}}. As the RFC states, the goal of MUD is to provide a means for end devices to signal to the network what sort of access and network functionality they require to properly function.
+Manufacturer Usage Descriptions (MUDs) have been specified in {{!RFC8520}}.
+As the RFC states, the goal of MUD is to provide a means for end devices to
+signal to the network what sort of access and network functionality they require
+to properly function.
 
 Schemes that rely on connectivity to bootstrap the network might be flaky if that connectivity is not present, potentially preventing the device from working correctly in the absence of Internet connectivity. Moreover, even in environments that do provide connectivity it is unclear how continued operation can occur when the manufacturer's server is no longer available.
 
-While {{!RFC8520}} contemplates the use of CoAP {{!RFC7252}} in the form of CoAP URLs, it does not explain how MUDs can be used in a CoAP network. Moreover, in CoAP the MUD file can be hosted on the CoAP endpoint itself, instead of hosting it on a dedicated MUD File Server.
+While {{!RFC8520}} contemplates the use of CoAP-related {{!RFC7252}} policies, it does not provide a viable means for constrained devices to distribute their MUD URLs in a network, since the methods it specifies (DHCP/DHCPv6, LLDP, and X.509 certificates) are not well-suited for the use with IPv6 in general and protocols like 6LoWPAN in particular.
 
-## Requirements Language
+Therefore, this document introduces a number of additional ways for distributing MUD URLs such as well-known URIs, an NDP option and parameters for the CoRE Link-Format, which are better suited for constrained devices.
+Furthermore, it allows the secure CoAP protocol variants ("coaps://" {{!RFC7252}} as well as "coaps+tcp://", and "coaps+ws://" {{!RFC8323}}) for the retrieval of MUD URLs.
+
+In theory, the permission for using secure CoAP also allows for the hosting of MUD files on IoT devices themselves.
+However, since MUD files must be encoded as JSON {{!RFC8259}}, this practice is discouraged for constrained devices as of writing this document and should only be considered once a more efficient encoding format, such as CBOR {{!RFC8949}}, has been specified for the use with MUD files.
+Such a specification is out of this document's scope, though.
+
+The rest of this document is structured as follows: ... TODO
+
+## Terminology
 
 {::boilerplate bcp14}
 
-# MUD Architecture
+Building upon the terminology defined in {{!RFC8520}}, this specification introduces the following additional terms:
+
+TODO. (Remove if there are no additional terms.)
+
+# Additions to the MUD Architecture
 
 MUDs are defined in {{!RFC8520}} and are composed of:
 
@@ -168,42 +185,70 @@ MUDstring:              String containing a MUD URL as defined
 
 ### NDP on 6LoWPANs
 
-LoWPANs are characterized as lossy, low-power, low-bit-rate, short-range; with many nodes saving energy with long sleep periods. For that reason vanilla NDP {{!RFC4861}} might not be the most desiderable solution in such networks and optimizations like the ones provided by {{!RFC6775}} are required.
-
-TBD : Figure out how these work
-
-## Stateless autoconfiguration (SLAAC)
-
-{{!RFC4862}} specifies how to create and auto configure link-local addresses during system startup.
+6LoWPANs are characterized as lossy, low-power, low-bit-rate, short-range; with many nodes saving energy with long sleep periods. For that reason vanilla NDP {{!RFC4861}} might not be the most desirable solution in such networks and optimizations like the ones provided by {{!RFC6775}} are required.
 
 TBD : Figure out how these work
 
 # CoAP Operations
 
-Things can expose MUDs as any other resource. MUD Managers can send a GET requests to a CoAP server for `/.well-known/core` and get in return a list of hypermedia links to other resources hosted in that server. Among those, it will get the path to the MUD file, for example `/mud` and Resource Types like `rt=mud`.
+Things can expose MUDs as well as MUD-URLs as any other resource.
+Furthermore, they can expose hypermedia links pointing to MUD files using the
+CoRE Link-Format {{!RFC6690}}.
+Using additional Link-Format parameters and well-known URIs, this document
+introduces new possibilities for discovering MUD URLs in constrained
+environments.
+
+MUD Managers can send a GET requests to a CoAP server for `/.well-known/core` and get in return a list of hypermedia links to other resources hosted in that server, encoded using the CoRE Link-Format {{!RFC6690}}.
+Among those, it will get the path to the MUD file, for example `/mud` and Resource Types like `rt=mud`.
 
 ## Discovery
 
+### Additional Well-known URIs
+
+This document introduces two new well-known URIs for discovering both MUD files and MUD URLs directly: `/.well-known/mud-file` and `/.well-known/mud-url`.
+
+`/.well-known/mud-file` MAY be used to expose a MUD file hosted by a device itself.
+This MUD file MUST describe the device that hosts it and SHOULD be signed in accordance with section 13 of {{!RFC8520}}. <!-- TODO: Revisit this requirement -->
+As stated in the introduction, this strategy is currently NOT RECOMMENDED for constrained devices, as only MUD files encoded as JSON are defined at the time of writing.
+This recommendation will most likely be updated once a canonical encoding format for MUD in CBOR becomes available.
+
+On the other hand, `/.well-known/mud-url` MAY be used to expose a URL pointing to a MUD file hosted by an external MUD file server.
+This MUD file also MUST describe the device the URL was retrieved from.
+
+### CoRE Link Format
+
+Resources which either host MUD URLs or MUD files MAY also be indicated using the CoRE Link Format !{{RFC6690}}.
+For this purpose, additional link parameters are defined:
+With the link relation-types `mud-file` and `mud-url`, a link MAY be annotated as pointing to a MUD file or a MUD URL, respectively.
+Note that the use of these relation-types is not limited to constrained environments and can also be used to annotate links in other contexts as well.
+
+<!-- TODO: Mention resource-type and /.well-known/core -->
+
+<!-- TODO: Add example -->
+
 ### Resource Directory
 
-By using {{?I-D.ietf-core-resource-directory}}, devices can register a MUD file on the Resource Directory and use it as a MUD repository too. Making it discoverable with the usual RD Lookup steps.
+By using CoRE Resource Directories {{?RFC9176}}, devices can register a MUD file or MUD URL and use the directory as a MUD repository, making it discoverable with the usual RD Lookup steps.
+A MUD manager itself MAY also act as a Resource Directory, directly applying registered MUD URLs or files to the network.
 
-Lookup will use the resource type `rt=mud`, the example in Link-Format {{?RFC6690}} is:
+Lookup will use the link-relation type `rel=mud-file`, the example in Link-Format {{?RFC6690}} is:
 
 ~~~
-REQ: GET coap://rd.company.com/rd-lookup/res?rt=mud
+REQ: GET coap://rd.company.com/rd-lookup/res?rel=mud-url
 
 RES: 2.05 Content
 
-     <coap://[2001:db8:3::101]/mud/box>;rt=mud;
+     <coap://[2001:db8:3::101]/mud/box>;rel=mud-file;
        anchor="coap://[2001:db8:3::101]"
-     <coap://[2001:db8:3::102]/mud/switch>;rt=mud;
+     <coap://[2001:db8:3::102]/mud/switch>;rel=mud-file;
        anchor="coap://[2001:db8:3::102]",
-     <coap://[2001:db8:3::102]/mud/lock>;rt=mud;
+     <coap://[2001:db8:3::102]/mud/lock>;rel=mud-file;
        anchor="coap://[2001:db8:3::102]",
-     <coap://[2001:db8:3::104]/mud/light>;rt=mud;
+     <coap://[2001:db8:3::104]/mud/light>;rel=mud-file;
        anchor="coap://[2001:db8:3::104]"
 ~~~
+
+TBD: Should this example be included?
 
 The same example in CoRAL ({{?I-D.ietf-core-coral}}, {{?I-D.hartke-t2trg-coral-reef}}) is:
 
@@ -214,20 +259,20 @@ REQ: GET coap://rd.company.com/rd-lookup/res?rt=mud
 RES: 2.05 Content
      Content-Format: TBD123456 (application/coral+cbor@identity)
 
-     rd-item <coap://[2001:db8:3::101]/mud/box> { rt "mud" }
-     rd-item <coap://[2001:db8:3::102]/mud/switch> { rt "mud" }
-     rd-item <coap://[2001:db8:3::102]/mud/lock> { rt "mud" }
-     rd-item <coap://[2001:db8:3::103]/mud/light> { rt "mud" }
+     rd-item <coap://[2001:db8:3::101]/mud/box> { rel "mud-file" }
+     rd-item <coap://[2001:db8:3::102]/mud/switch> { rel "mud-file" }
+     rd-item <coap://[2001:db8:3::102]/mud/lock> { rel "mud-file" }
+     rd-item <coap://[2001:db8:3::103]/mud/light> { rel "mud-file" }
 ~~~
 
 ### Multicast
 
-{{!RFC7252}} registers one IPv4 and one IPv6 address each for the purpose of CoAP multicast. All CoAP Nodes can be addressed at `224.0.1.187` and at `FF0X::FD`. Multicast could also be used to discover all Manufacturer descriptions in a subnet.
+{{!RFC7252}} registers one IPv4 and one IPv6 address each for the purpose of CoAP multicast. All CoAP Nodes can be addressed at `224.0.1.187` and at `FF0X::FD`. Multicast could also be used to discover all MUDs in a subnet.
 
 The example in Link-Format {{?RFC6690}} is:
 
 ~~~
-GET coap://[FF0X::FE]/.well-known/core?rt=mud
+GET coap://[FF0X::FE]/.well-known/core?rel=mud-file
 ~~~
 
 The same example in CoRAL ({{?I-D.ietf-core-coral}}, {{?I-D.hartke-t2trg-coral-reef}}) is:
@@ -242,13 +287,15 @@ REQ: GET coap://[FF0X::FE]/.well-known/core?rt=mud
 Using {{?RFC6690}} using CoRE Link Format, a CoAP endpoint could attempt to configure itself based on another Thing's MUD. For that reason it might fetch directly the MUD file from the device. It would start by finding if the endpoint has a MUD. The example in Link-Format {{?RFC6690}} is:
 
 ~~~
-REQ: GET coap://[2001:db8:3::123]:5683/.well-known/core?rt=mud
+REQ: GET coap://[2001:db8:3::123]:5683/.well-known/core?rel=mud-file
 
 RES: 2.05 Content
 
-     </mud/light>;rt=mud
+     <coaps://example.com/mudfile>;rel="mud-file";ct=9001;anchor="/"
 ~~~
 
+<!--
+TBD: Should this example be included?
 In CoRAL ({{?I-D.ietf-core-coral}}, {{?I-D.hartke-t2trg-coral-reef}}):
 
 ~~~
@@ -259,11 +306,11 @@ RES: 2.05 Content
      Content-Format: TBD123456 (application/coral+cbor@identity)
 
      rd-item </mud/light> { rt "mud" }
-~~~
+~~~ -->
 
-Once the client knows that there is a MUD file under `/mud/lightmud`, it can decide to follow the presented links and query it.
+Once the client knows that there is a MUD file under `coaps://example.com/mudfile`, it can decide to follow the presented link and query it.
 
-~~~
+<!-- ~~~
 REQ: GET coap://[2001:db8:3::123]:5683/mud/light
 RES: 2.05 Content
 
@@ -280,7 +327,7 @@ RES: 2.05 Content
      [{MUD Payload in SENML}]
 ~~~
 
-The device may also observe the MUD resource using {{?RFC7641}}, directly subscribing to future network configuration changes.
+The device may also observe the MUD resource using {{?RFC7641}}, directly subscribing to future network configuration changes. -->
 
 # MUD File
 
@@ -304,7 +351,23 @@ If the host part is always dynamically computed how are bootstrap / attachment s
 
 # IANA Considerations
 
-TBD: rt=mud should be registered.
+##  Well-Known 'mud-url' URI
+
+<!-- Retrieval of MUD URL from device, Example: "/.well-known/mud-url" -->
+
+##  Well-Known 'mud-file' URI
+
+<!-- Direct retrieval of MUD file, Example: "/.well-known/mud-file" -->
+
+## New 'mud' Relation Type
+
+## Media Types Registry
+
+- application/mud+cbor?
+
+## CoAP Content-Format Registry
+
+- application/mud+json
 
 --- back
 
