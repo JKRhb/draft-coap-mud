@@ -14,6 +14,12 @@ pi: [toc, sortrefs, symrefs, iprnotified]
 
 author:
  -
+    ins: J. Romann
+    name: Jan Romann
+    organization: Universität Bremen
+    email: jan.romann@uni-bremen.de
+    role: editor
+ -
     ins: J. Jiménez
     name: Jaime Jiménez
     organization: Ericsson
