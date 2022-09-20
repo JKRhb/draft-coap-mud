@@ -1,16 +1,21 @@
 ---
-title: Using MUD on CoAP environments
+v: 3
+coding: utf-8
+
+title: Using MUD in Constrained Environments
 abbrev: MUD and CoAP
 docname: draft-jimenez-t2trg-mud-coap-latest
-category: info
 
-ipr: trust200902
+category: std
+submissiontype: IETF
+consensus: true
+
 area: IRTF
 workgroup: T2TRG Research Group
 keyword: CoAP, MUD, Problem Details
 
-stand_alone: yes
-pi: [toc, sortrefs, symrefs, iprnotified]
+venue:
+  github: namib-project/draft-coap-mud
 
 author:
  -
@@ -25,6 +30,9 @@ author:
     organization: Ericsson
     phone: "+358-442-992-827"
     email: jaime@iki.fi
+
+entity:
+        SELF: "[RFC-XXXX]"
 
 --- abstract
 This document provides some guidelines on how to add Manufacturer Usage Descriptions (MUD) to constrained environments.
