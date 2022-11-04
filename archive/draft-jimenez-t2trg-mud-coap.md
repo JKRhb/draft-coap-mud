@@ -25,11 +25,11 @@ author:
     email: jan.romann@uni-bremen.de
     role: editor
  -
-    ins: J. Jiménez
-    name: Jaime Jiménez
-    organization: Ericsson
-    phone: "+358-442-992-827"
-    email: jaime@iki.fi
+    ins: H. Damer
+    name: Hugo Hakim Damer
+    organization: Universität Bremen
+    email: hdamer@uni-bremen.de
+    role: editor
 
 entity:
         SELF: "[RFC-XXXX]"
