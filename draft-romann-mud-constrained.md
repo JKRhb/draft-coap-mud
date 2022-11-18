@@ -44,7 +44,7 @@ TODO: Should be updated.
 
 --- middle
 
-# Introduction
+# Introduction and Overview
 
 Manufacturer Usage Descriptions (MUDs) have been specified in {{!RFC8520}}.
 As the RFC states, the goal of MUD is to provide a means for end devices to
@@ -72,7 +72,11 @@ Building upon the terminology defined in {{!RFC8520}}, this specification introd
 
 TODO. (Remove if there are no additional terms.)
 
-# Exposing a MUD URL using NDP
+# Exposing a MUD URL in Constrained Environments
+
+In this section, additional methods for exposing MUD URLs are introduced.
+
+## Exposing a MUD URL using NDP
 
 IPv6 hosts do not require DHCP to get access to the default gateway.
 Using NDP {{!RFC4861}} and Stateless Address Autoconfiguration (SLAAC) {{!RFC4862}}, nodes can configure global addresses on their own based on prefixes contained in NDP Router Advertisements (RAs).
@@ -107,7 +111,7 @@ MUDstring:              String containing a MUD URL as defined
 
 TODO: Is there anything to take into account when using NDP on 6LoWPANs?
 
-# Exposing a MUD URL using CoAP
+## Exposing a MUD URL using CoAP
 
 Things can expose MUD-URLs as any other resource.
 Furthermore, they can expose hypermedia links pointing to MUD files using the
@@ -116,7 +120,7 @@ Using additional Link-Format parameters and well-known URIs, this document
 introduces new possibilities for discovering MUD URLs in constrained
 environments.
 
-## Additional Well-known URIs
+### Additional Well-known URIs
 
 This document introduces two new well-known URIs for discovering both MUD files and MUD URLs directly: `/.well-known/mud-file` and `/.well-known/mud-url`.
 
@@ -129,7 +133,7 @@ This recommendation will most likely be updated once a canonical encoding format
 On the other hand, `/.well-known/mud-url` MAY be used to expose a URL pointing to a MUD file hosted by an external MUD file server.
 This MUD file also MUST describe the device the URL was retrieved from.
 
-## CoRE Link Format
+### CoRE Link Format
 
 Resources which either host MUD URLs or MUD files MAY also be indicated using the CoRE Link Format !{{RFC6690}}.
 For this purpose, additional link parameters are defined:
@@ -142,6 +146,21 @@ Among those, it will get the path to the resource exposing the MUD URL, for exam
 <!-- TODO: Mention resource-type and /.well-known/core -->
 
 <!-- TODO: Add example -->
+
+### Multicast
+
+{{!RFC7252}} registers one IPv4 and one IPv6 address each for the purpose of CoAP multicast.
+In addition to these already existing "All CoAP Nodes" multicast addresses, this document defines additional "All MUD CoAP Nodes" multicast addresses that can be used to address only the subset of CoAP Nodes that support MUD.
+If a device exposes a MUD URL via CoAP, it SHOULD join the respective multicast groups for the IP versions it supports.
+
+TODO: Add example
+
+# Obtaining a MUD URL in Constrained Environments
+
+With the additional mechanisms for finding MUD URLs, MUD managers can be configured to play a more active role in discovering MUD-enabled devices.
+Furthermore, IoT devices could identify their peers based on a MUD URL associated with these devices or perform a configuration process based on the linked MUD file's contents.
+
+TODO: Add stuff here
 
 ## CoRE Resource Directories
 
@@ -164,33 +183,6 @@ RES: 2.05 Content
      <coap://[2001:db8:3::104]/mud/light>;rel=mud-file;
        anchor="coap://[2001:db8:3::104]"
 ~~~
-
-### Multicast
-
-{{!RFC7252}} registers one IPv4 and one IPv6 address each for the purpose of CoAP multicast.
-In addition to these already existing "All CoAP Nodes" multicast addresses, this document defines additional "All MUD CoAP Nodes" multicast addresses that can be used to address only the subset of CoAP Nodes that support MUD.
-If a device exposes a MUD URL via CoAP, it SHOULD join the respective multicast groups for the IP versions it supports.
-
-TODO: Add example
-
-### Direct MUD discovery
-
-Using {{?RFC6690}} using CoRE Link Format, a CoAP endpoint could attempt to configure itself based on another Thing's MUD. For that reason it might fetch directly the MUD file from the device. It would start by finding if the endpoint has a MUD. The example in Link-Format {{?RFC6690}} is:
-
-~~~
-REQ: GET coap://[2001:db8:3::123]:5683/.well-known/core?rel=mud-file
-
-RES: 2.05 Content
-
-     <coaps://example.com/mudfile>;rel="mud-file";ct=9001;anchor="/"
-~~~
-
-# Finding a MUD URL using CoAP
-
-With the additional mechanisms for finding MUD URLs, MUD managers can be configured to play a more active role in discovering MUD-enabled devices.
-Furthermore, IoT devices could identify their peers based on a MUD URL associated with these devices or perform a configuration process based on the linked MUD file's contents.
-
-TODO: Add stuff here
 
 # Security Considerations
 
