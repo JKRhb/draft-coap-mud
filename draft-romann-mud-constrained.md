@@ -134,7 +134,7 @@ This MUD file also MUST describe the device the URL was retrieved from.
 Resources which either host MUD URLs or MUD files MAY also be indicated using the CoRE Link Format !{{RFC6690}}.
 For this purpose, additional link parameters are defined:
 With the link relation-types `mud-file` and `mud-url`, a link MAY be annotated as pointing to a MUD file or a MUD URL, respectively.
-Note that the use of these relation-types is not limited to constrained environments and can also be used to annotate links in other contexts, such as a Web of Things Thing Description {{W3C wot-thing-description11}}.
+Note that the use of these relation-types is not limited to constrained environments and can also be used to annotate links in other contexts, such as a Web of Things Thing Description {{W3C.wot-thing-description11}}.
 
 MUD Managers or other devices can send a GET requests to a CoAP server for `/.well-known/core` and get in return a list of hypermedia links to other resources hosted in that server, encoded using the CoRE Link-Format {{!RFC6690}}.
 Among those, it will get the path to the resource exposing the MUD URL, for example `/.well-known/mud-url` and Resource Types like `rel=mud`.
