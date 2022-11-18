@@ -153,10 +153,13 @@ TODO: Add example
 
 # Obtaining a MUD URL in Constrained Environments
 
-With the additional mechanisms for finding MUD URLs, MUD managers can be configured to play a more active role in discovering MUD-enabled devices.
-Furthermore, IoT devices could identify their peers based on a MUD URL associated with these devices or perform a configuration process based on the linked MUD file's contents.
+<!-- TODO: This can probably be improved -->
 
-TODO: Add stuff here
+With the additional mechanisms for finding MUD URLs introduced in this document, MUD managers can be configured to play a more active role in discovering MUD-enabled devices.
+Furthermore, IoT devices could identify their peers based on a MUD URL associated with these devices or perform a configuration process based on the linked MUD file's contents.
+However, the IoT devices themselves also have more options for exposing their MUD URLs more actively, using, for instance, a MUD manager's registration interface.
+
+In the remainder of this section, we will outline potential use-cases and procedures for obtaining a MUD URL with the additional mechanisms defined above.
 
 ## CoRE Resource Directories
 
