@@ -44,7 +44,7 @@ TODO: Should be updated.
 
 --- middle
 
-# Introduction
+# Introduction and Overview
 
 Manufacturer Usage Descriptions (MUDs) have been specified in {{!RFC8520}}.
 As the RFC states, the goal of MUD is to provide a means for end devices to
@@ -134,7 +134,7 @@ This MUD file also MUST describe the device the URL was retrieved from.
 Resources which either host MUD URLs or MUD files MAY also be indicated using the CoRE Link Format !{{RFC6690}}.
 For this purpose, additional link parameters are defined:
 With the link relation-types `mud-file` and `mud-url`, a link MAY be annotated as pointing to a MUD file or a MUD URL, respectively.
-Note that the use of these relation-types is not limited to constrained environments and can also be used to annotate links in other contexts as well.
+Note that the use of these relation-types is not limited to constrained environments and can also be used to annotate links in other contexts, such as a Web of Things Thing Description {{?W3C.wot-thing-description11}}.
 
 MUD Managers or other devices can send a GET requests to a CoAP server for `/.well-known/core` and get in return a list of hypermedia links to other resources hosted in that server, encoded using the CoRE Link-Format {{!RFC6690}}.
 Among those, it will get the path to the resource exposing the MUD URL, for example `/.well-known/mud-url` and Resource Types like `rel=mud`.
@@ -142,6 +142,24 @@ Among those, it will get the path to the resource exposing the MUD URL, for exam
 <!-- TODO: Mention resource-type and /.well-known/core -->
 
 <!-- TODO: Add example -->
+
+## Multicast
+
+{{!RFC7252}} registers one IPv4 and one IPv6 address each for the purpose of CoAP multicast.
+In addition to these already existing "All CoAP Nodes" multicast addresses, this document defines additional "All MUD CoAP Nodes" multicast addresses that can be used to address only the subset of CoAP Nodes that support MUD.
+If a device exposes a MUD URL via CoAP, it SHOULD join the respective multicast groups for the IP versions it supports.
+
+TODO: Add example
+
+# Obtaining a MUD URL in Constrained Environments
+
+<!-- TODO: This can probably be improved -->
+
+With the additional mechanisms for finding MUD URLs introduced in this document, MUD managers can be configured to play a more active role in discovering MUD-enabled devices.
+Furthermore, IoT devices could identify their peers based on a MUD URL associated with these devices or perform a configuration process based on the linked MUD file's contents.
+However, the IoT devices themselves also have more options for exposing their MUD URLs more actively, using, for instance, a MUD manager's registration interface.
+
+In the remainder of this section, we will outline potential use-cases and procedures for obtaining a MUD URL with the additional mechanisms defined above.
 
 ## CoRE Resource Directories
 
@@ -164,33 +182,6 @@ RES: 2.05 Content
      <coap://[2001:db8:3::104]/mud/light>;rel=mud-file;
        anchor="coap://[2001:db8:3::104]"
 ~~~
-
-### Multicast
-
-{{!RFC7252}} registers one IPv4 and one IPv6 address each for the purpose of CoAP multicast.
-In addition to these already existing "All CoAP Nodes" multicast addresses, this document defines additional "All MUD CoAP Nodes" multicast addresses that can be used to address only the subset of CoAP Nodes that support MUD.
-If a device exposes a MUD URL via CoAP, it SHOULD join the respective multicast groups for the IP versions it supports.
-
-TODO: Add example
-
-### Direct MUD discovery
-
-Using {{?RFC6690}} using CoRE Link Format, a CoAP endpoint could attempt to configure itself based on another Thing's MUD. For that reason it might fetch directly the MUD file from the device. It would start by finding if the endpoint has a MUD. The example in Link-Format {{?RFC6690}} is:
-
-~~~
-REQ: GET coap://[2001:db8:3::123]:5683/.well-known/core?rel=mud-file
-
-RES: 2.05 Content
-
-     <coaps://example.com/mudfile>;rel="mud-file";ct=9001;anchor="/"
-~~~
-
-# Finding a MUD URL using CoAP
-
-With the additional mechanisms for finding MUD URLs, MUD managers can be configured to play a more active role in discovering MUD-enabled devices.
-Furthermore, IoT devices could identify their peers based on a MUD URL associated with these devices or perform a configuration process based on the linked MUD file's contents.
-
-TODO: Add stuff here
 
 # Security Considerations
 
