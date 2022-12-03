@@ -92,7 +92,15 @@ using CoAP {{!RFC7252}} for exposing and discovering MUD URLs.
 
 A general overview of the MUD architecture adjusted for using CoAP in a
 constrained environment can be seen in {{arch1-fig}}.
-Here, ... (add more stuff here.)
+Here, we can see that both the Thing and the MUD manager (as the recipient of
+the MUD URLs) may initiate the MUD discovery process:
+The Thing can contact and register with MUD URL recipients, e.g. by sending a
+CoAP POST request via Multicast, addressing a well-known registration endpoint.
+Conversely, MUD recipients can initiate the discovery process, e.g. by sending a
+COAP GET request to a well-known URI via multicast.
+Therefore, with the additional parameters introduced in this document, both
+Things and MUD managers can play a more active role during the MUD discovery
+process.
 
 TODO: Refine diagram
 
@@ -131,6 +139,37 @@ package "MUD Architecture" {
 ...................................................
 ~~~
 {: #arch1-fig title="Exposing and discovering MUD URLs via CoAP" artwork-align="center"}
+
+Optionally, Things may also provide additional means for proving the
+authenticity of the MUD URL associated with them.
+For that purpose, this document specifies how to use CBOR Object Signing and
+Encryption (COSE) {{!RFC8152}} objects to attach a manufacturer's signature to
+a MUD URL.
+Using this additional feature, the MUD architecture is augmented once more, as
+visualized in {{arch2-fig}}.
+
+TODO: Replace diagram
+
+~~~
+...................................................
+.                                  ____________   .
+.                                 +            +  .
+.             +------------------ |    MUD     |  .
+.   get URL   |                   |  Manager   |  .
+.   (coaps)   |                   +____________+  .
+.  MUD file   |                         .         .
+.             |                         .         .
+.             |     End system network  .         .
+.             |                         .         .
+.           __v____                 _________     .
+.          +       + (DHCP et al.) + router  +    .
+.     +--- | Thing +---->MUD URL+->+   or    |    .
+.     |MUD +_______+               | switch  |    .
+.     |File  |                     +_________+    .
+.     +------+                                    .
+...................................................
+~~~
+{: #arch2-fig title="MUD Discovery using COSE objects." artwork-align="center"}
 
 TODO: Add more architecture stuff here.
 
