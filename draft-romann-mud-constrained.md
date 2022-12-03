@@ -85,9 +85,41 @@ The *Thing* that wants to obtain network access via a Router or Switch, and the
 *MUD Manager* that processes MUD URLs, retrieves MUD files from the
 MUD file server, and configures other network components accordingly.
 
+While exposing a MUD URL via the NDP option defined in {{ndp}} works similar to
+using DHCP(v6), with the router forwarding an emitted MUD URL to the MUD
+manager, both the Thing and the MUD manager can play more active roles when
+using CoAP {{!RFC7252}} for exposing and discovering MUD URLs.
+
+A general overview of the MUD architecture adjusted for using CoAP in a
+constrained environment can be seen in {{arch1-fig}}.
+Here, ... (add more stuff here.)
+
+TODO: Replace with our own figure (maybe even a plantuml diagram?)
+
+~~~
+...................................................
+.                                  ____________   .
+.                                 +            +  .
+.             +------------------ |    MUD     |  .
+.   get URL   |                   |  Manager   |  .
+.   (coaps)   |                   +____________+  .
+.  MUD file   |                         .         .
+.             |                         .         .
+.             |     End system network  .         .
+.             |                         .         .
+.           __v____                 _________     .
+.          +       + (DHCP et al.) + router  +    .
+.     +--- | Thing +---->MUD URL+->+   or    |    .
+.     |MUD +_______+               | switch  |    .
+.     |File  |                     +_________+    .
+.     +------+                                    .
+...................................................
+~~~
+{: #arch1-fig title="Exposing and discovering MUD URLs via CoAP" artwork-align="center"}
+
 TODO: Add more architecture stuff here.
 
-# Exposing a MUD URL using NDP
+# Exposing a MUD URL using NDP {#ndp}
 
 IPv6 hosts do not require DHCP to get access to the default gateway.
 Using NDP {{!RFC4861}} and Stateless Address Autoconfiguration (SLAAC) {{!RFC4862}}, nodes can configure global addresses on their own based on prefixes contained in NDP Router Advertisements (RAs).
