@@ -94,9 +94,9 @@ A general overview of the MUD architecture adjusted for using CoAP in a
 constrained environment can be seen in {{arch1-fig}}.
 Here, ... (add more stuff here.)
 
-TODO: Replace with our own figure (maybe even a plantuml diagram?)
+TODO: Refine diagram
 
-~~~ plantuml-utxt
+~~~ plantuml
 package "MUD Architecture" {
   [Router or switch]
   [MUD manager]
