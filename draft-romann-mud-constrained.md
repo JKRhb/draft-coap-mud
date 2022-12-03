@@ -96,24 +96,17 @@ Here, ... (add more stuff here.)
 
 TODO: Replace with our own figure (maybe even a plantuml diagram?)
 
-~~~
-...................................................
-.                                  ____________   .
-.                                 +            +  .
-.             +------------------ |    MUD     |  .
-.   get URL   |                   |  Manager   |  .
-.   (coaps)   |                   +____________+  .
-.  MUD file   |                         .         .
-.             |                         .         .
-.             |     End system network  .         .
-.             |                         .         .
-.           __v____                 _________     .
-.          +       + (DHCP et al.) + router  +    .
-.     +--- | Thing +---->MUD URL+->+   or    |    .
-.     |MUD +_______+               | switch  |    .
-.     |File  |                     +_________+    .
-.     +------+                                    .
-...................................................
+~~~ plantuml-utxt
+package "MUD Architecture" {
+  [Router or switch]
+  [MUD manager]
+  [Thing]
+}
+
+[Thing] --> [Router or switch] : Emit MUD URL via NDP
+[Thing] --> [MUD manager] : Register MUD URL
+[MUD manager] --> [Thing] : Retrieve MUD URL
+[Router or switch] --> [MUD manager] : Pass MUD URL
 ~~~
 {: #arch1-fig title="Exposing and discovering MUD URLs via CoAP" artwork-align="center"}
 
