@@ -255,7 +255,7 @@ If a device exposes a MUD URL via CoAP, it SHOULD join the respective multicast 
 
 TODO: Add example
 
-## CoRE Link Format and CoRe Resource Direectories
+## CoRE Link Format and CoRE Resource Direectories
 
 Resources which either host MUD URLs or MUD files MAY also be indicated using the CoRE Link Format !{{RFC6690}}.
 For this purpose, additional link parameters are defined:
