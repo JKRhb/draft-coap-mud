@@ -98,9 +98,6 @@ The Thing can contact and register with MUD URL recipients, e.g. by sending a
 CoAP POST request via Multicast, addressing a well-known registration endpoint.
 Conversely, MUD recipients can initiate the discovery process, e.g. by sending a
 COAP GET request to a well-known URI via multicast.
-Therefore, with the additional parameters introduced in this document, both
-Things and MUD managers can play a more active role during the MUD discovery
-process.
 
 TODO: Refine diagram
 
