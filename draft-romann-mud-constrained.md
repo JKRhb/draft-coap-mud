@@ -247,6 +247,47 @@ CBOR Web Tokens that contain MUD-URL information have the following properties:
 
 CoAP requests and responses that use this format MUST use the Content-Format option with the value corresponding to the "application/mud-url+cwt" media type.
 
+## MUD CoAP Payloads
+CoAP allows transmission of information in different formats.
+For the purposes of this specification, we will define three different formats, which are suitable for different environments.
+Each of these formats can be used for both of the 
+
+### Plain URL
+The easiest method of transmitting MUD-URLs is using a plain text payload containing only the MUD-URL.
+While this method has the advantage of simplicity, it does not contain any additional information that could be used by a MUD receiver to authenticate the supplied MUD-URL.
+
+CoAP requests and responses that use this format MUST use the Content-Format option with the value corresponding to the "application/mud-url+plain" media type.
+
+### Unsigned CBOR
+Using unsigned CBOR payloads allows delivering additional information regarding the MUD-URL alongside the MUD-URL itself.
+
+Additional information that manufacturers might want to deliver alongside the URL itself could be one or multiple of the following:
+- Generic information regarding the device that should be available even if the MUD file server is unavailable.
+- Alternative MUD-URLs for redundancy.
+<!-- TODO: More? -->
+
+The structure of the CBOR object is described using CDDL notation as follows:
+<!-- TODO -->
+
+CoAP requests and responses that use this format MUST use the Content-Format option with the value corresponding to the "application/mud-url+cbor" media type.
+
+### MUD-URLs inside of CBOR Web Tokens
+Previous methods of transmitting MUD-URLs do not allow for authentication of supplied MUD URLs.
+To accomodate for environments where authentication of MUD-URLs is desired, it is also possible to include the MUD-URL as a claim inside of a CBOR Web Token {{!RFC8392}}.
+This allows for MUD receivers or MUD controllers to verify the authenticity of the provided MUD-URL.
+
+CBOR Web Tokens that contain MUD-URL information have the following properties:
+- The MUD-URL is contained as an ASCII-encoded string in the "mud-url" claim.
+- The Token MAY contain Proof-of-Possession claims {{!RFC8747}}. 
+  If it does, the MUD receiver MUST verify that the device is in possession of the key specified in the cnf claim. 
+  <!-- TODO we should probably specify a proof-of-possession mechanism. -->
+- The Token MAY contain an expiry time.
+  If an expiry time is specified, the MUD-URL should be resubmitted or requested again shortly before the original CWT expires.
+  Note that using an expiry time could cause problems if the device is unable to perform a refresh, e.g., due to a power outage.
+  <!-- TODO maybe be more specific regarding the time where the refresh should happen -->
+
+CoAP requests and responses that use this format MUST use the Content-Format option with the value corresponding to the "application/mud-url+cose" media type.
+
 ## Resource Discovery
 
 In this section, additional methods for resource discovery in constrained environments are defined.
