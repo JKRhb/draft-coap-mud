@@ -231,60 +231,34 @@ environments.
 
 ## Resource Discovery
 
-### Well-known URIs and Multicast Addresses
+In this section, additional methods for resource discovery in constrained environments are defined.
 
-This document introduces two new well-known URIs for discovering both MUD files and MUD URLs directly: `/.well-known/mud-file` and `/.well-known/mud-url`.
+### Well-known URI and Multicast Addresses
 
-<!-- TODO: This well-known URI could also be removed -->
-`/.well-known/mud-file` MAY be used to expose a MUD file hosted by a device itself.
-This MUD file MUST describe the device that hosts it and SHOULD be signed in accordance with section 13 of {{!RFC8520}}.
-As stated in the introduction, this strategy is currently NOT RECOMMENDED for constrained devices, as only MUD files encoded as JSON are defined at the time of writing.
-This recommendation will most likely be updated once a canonical encoding format for MUD in CBOR becomes available.
+This document introduces a new well-known URI for discovering MUD URLs directly: `/.well-known/mud-url`.
 
-On the other hand, `/.well-known/mud-url` MAY be used to expose a URL pointing to a MUD file hosted by an external MUD file server.
-This MUD file also MUST describe the device the URL was retrieved from.
-
-<!-- ## Multicast -->
+`/.well-known/mud-url` MAY be used to expose a URL pointing to a MUD file hosted by an external MUD file server.
+This MUD file MUST describe the device the URL was retrieved from or is referring to within a list of CoRE links.
 
 {{!RFC7252}} registers one IPv4 and one IPv6 address each for the purpose of CoAP multicast.
 In addition to these already existing "All CoAP Nodes" multicast addresses, this document defines additional "All MUD CoAP Nodes" multicast addresses that can be used to address only the subset of CoAP Nodes that support MUD.
 If a device exposes a MUD URL via CoAP, it SHOULD join the respective multicast groups for the IP versions it supports.
 
-TODO: Add example
+### CoRE Link Format and CoRE Resource Directories
 
-## CoRE Link Format and CoRE Resource Direectories
-
-Resources which either host MUD URLs or MUD files MAY also be indicated using the CoRE Link Format !{{RFC6690}}.
+Resources which either host MUD URLs or MUD files MAY be indicated using the CoRE Link Format {{!RFC6690}}.
 For this purpose, additional link parameters are defined:
+<!-- TBD: Could also use the link-relation described-by with resource types mud-file or mud-file -->
 With the link relation-types `mud-file` and `mud-url`, a link MAY be annotated as pointing to a MUD file or a MUD URL, respectively.
 Note that the use of these relation-types is not limited to constrained environments and can also be used to annotate links in other contexts, such as a Web of Things Thing Description {{?W3C.wot-thing-description11}}.
 
 MUD Managers or other devices can send a GET requests to a CoAP server for `/.well-known/core` and get in return a list of hypermedia links to other resources hosted in that server, encoded using the CoRE Link-Format {{!RFC6690}}.
-Among those, it will get the path to the resource exposing the MUD URL, for example `/.well-known/mud-url` and Resource Types like `rel=mud`.
-
-<!-- TODO: Mention resource-type and /.well-known/core -->
-
-<!-- ## CoRE Resource Directories -->
+Among those, it will get the path to the resource exposing the MUD URL, for example `/.well-known/mud-url` and link relation-types like `rel=mud-url`.
 
 By using CoRE Resource Directories {{?RFC9176}}, devices can register a MUD file or MUD URL and use the directory as a MUD repository, making it discoverable with the usual RD Lookup steps.
-A MUD manager itself MAY also act as a Resource Directory, directly applying registered MUD URLs or files to the network.
-
-Lookup will use the link-relation type `rel=mud-file`, the example in Link-Format {{?RFC6690}} is:
-
-~~~
-REQ: GET coap://rd.company.com/rd-lookup/res?rel=mud-url
-
-RES: 2.05 Content
-
-     <coap://[2001:db8:3::101]/mud/box>;rel=mud-file;
-       anchor="coap://[2001:db8:3::101]"
-     <coap://[2001:db8:3::102]/mud/switch>;rel=mud-file;
-       anchor="coap://[2001:db8:3::102]",
-     <coap://[2001:db8:3::102]/mud/lock>;rel=mud-file;
-       anchor="coap://[2001:db8:3::102]",
-     <coap://[2001:db8:3::104]/mud/light>;rel=mud-file;
-       anchor="coap://[2001:db8:3::104]"
-~~~
+A MUD manager itself MAY also act as a Resource Directory, directly applying the policies from registered MUD files to the network.
+In addition to the registration endpoint defined in {{?RFC9176}}, MUD managers MAY define a separate registration interface when acting as a CoRE RD.
+<!-- TODO: Decide if this makes sense -->
 
 # Obtaining a MUD URL in Constrained Environments
 
