@@ -164,14 +164,21 @@ TODO: Replace diagram
 
 TODO: Add more architecture stuff here.
 
-# MUD URL using CoAP - General Considerations
+# General Considerations
 
-Things can expose MUD-URLs as any other resource.
-Furthermore, they can expose hypermedia links pointing to MUD files using the
-CoRE Link-Format {{!RFC6690}}.
-Using additional Link-Format parameters and well-known URIs, this document
-introduces new possibilities for discovering MUD URLs in constrained
-environments.
+For this document, we focus on two mechanisms for exposing MUD URLs in a
+constrained network:
+On the one hand, Things can expose MUD-URLs as a dedicated CoAP resource.
+This allows them to further secure the payload and provide additional
+authentication, e.g., by embedding the URL in a CBOR Web Token.
+On the other hand, Things can include a MUD URL in a list of links, using, for
+example, the CoRE Link-Format.
+This Web Linking approach also allows Things to submit MUD URLs to a Directory
+Service.
+
+In the following, we will first outline these additional means for exposing MUD
+URLs before going into more detail regarding potential exposure and discovery
+flows.
 
 ## MUD CoAP Payloads
 
