@@ -37,8 +37,9 @@ entity:
         SELF: "[RFC-XXXX]"
 
 --- abstract
-This document specifies additional ways for discovering Manufacturer Usage Descriptions (MUD), especially in constrained environments.
-We propose allowing the use of MUD URLs using the "coaps://", "coaps+tcp://", and "coaps+ws://" schemes and additional mechanisms for emitting the URLs via CoAP and NDP.
+This document specifies additional ways for discovering and emitting
+Manufacturer Usage Descriptions (MUD), especially in constrained environments,
+utilizing the Constrained Application Protocol (CoAP).
 
 TODO: Should be updated.
 
@@ -55,8 +56,6 @@ Schemes that rely on connectivity to bootstrap the network might be flaky if tha
 
 While {{!RFC8520}} contemplates the use of CoAP-related {{!RFC7252}} policies, it does not provide a viable means for constrained devices to distribute their MUD URLs in a network, since the methods it specifies (DHCP/DHCPv6, LLDP, and X.509 certificates) are not well-suited for the use with IPv6 in general and protocols like 6LoWPAN in particular.
 
-Therefore, this document introduces a number of additional ways for distributing MUD URLs -- such as well-known URIs, an NDP option and parameters for the CoRE Link-Format -- which are better suited for constrained devices.
-Furthermore, using COSE objects, Things can distribute a signed MUD URL which allows MUD managers to better validate the authenticity of both the URL itself and the associated MUD file.
 <!--
 Furthermore, it allows the secure CoAP protocol variants ("coaps://" {{!RFC7252}} as well as "coaps+tcp://", and "coaps+ws://" {{!RFC8323}}) for the retrieval of MUD URLs.
 
@@ -66,6 +65,12 @@ TODO: Make final decision if still relevant
 <!-- In theory, the permission for using secure CoAP also allows for the hosting of MUD files on IoT devices themselves.
 However, since MUD files must be encoded as JSON {{!RFC8259}}, this practice is discouraged for constrained devices as of writing this document and should only be considered once a more efficient encoding format, such as CBOR {{!RFC8949}}, has been specified for the use with MUD files.
 Such a specification is out of this document's scope, though. -->
+Therefore, this document introduces a number of additional ways for distributing
+MUD URLs -- such as well-known URIs and parameters for the CoRE Link-Format --
+which are better suited for constrained devices.
+Furthermore, using COSE objects, Things can distribute a signed MUD URL which
+allows MUD managers to better validate the authenticity of both the URL itself
+and the associated MUD file.
 
 The rest of this document is structured as follows: ... TODO
 
@@ -84,10 +89,7 @@ main network components relevant for this document:
 The *Thing* that wants to obtain network access via a Router or Switch, and the
 *MUD Manager* that processes MUD URLs, retrieves MUD files from the
 MUD file server, and configures other network components accordingly.
-
-While exposing a MUD URL via the NDP option defined in {{ndp}} works similar to
-using DHCP(v6), with the router forwarding an emitted MUD URL to the MUD
-manager, both the Thing and the MUD manager can play more active roles when
+Both the Thing and the MUD manager can play more active roles when
 using CoAP {{!RFC7252}} for exposing and discovering MUD URLs.
 
 A general overview of the MUD architecture adjusted for using CoAP in a
