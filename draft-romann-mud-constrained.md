@@ -354,3 +354,7 @@ TODO: Mention something about signing MUD files and MUD URLs using JOSE and -- i
 
 # Acknowledgments
 {: numbered="no"}
+
+We would like to thank Jaime Jiménez for allowing us to build upon his draft
+`draft-jimenez-t2trg-mud-coap-00` for creating an initial version of this
+document.
