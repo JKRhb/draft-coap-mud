@@ -52,19 +52,11 @@ As the RFC states, the goal of MUD is to provide a means for end devices to
 signal to the network what sort of access and network functionality they require
 to properly function.
 
-Schemes that rely on connectivity to bootstrap the network might be flaky if that connectivity is not present, potentially preventing the device from working correctly in the absence of Internet connectivity. Moreover, even in environments that do provide connectivity it is unclear how continued operation can occur when the manufacturer's server is no longer available.
+While {{!RFC8520}} contemplates the use of CoAP-related {{!RFC7252}} policies,
+the MUD URL discovery methods it specifies (DHCP/DHCPv6, LLDP, and X.509
+certificates) are not well-suited for constrained environments (e.g., 802.15.4
+networks using 6LoWPAN).
 
-While {{!RFC8520}} contemplates the use of CoAP-related {{!RFC7252}} policies, it does not provide a viable means for constrained devices to distribute their MUD URLs in a network, since the methods it specifies (DHCP/DHCPv6, LLDP, and X.509 certificates) are not well-suited for the use with IPv6 in general and protocols like 6LoWPAN in particular.
-
-<!--
-Furthermore, it allows the secure CoAP protocol variants ("coaps://" {{!RFC7252}} as well as "coaps+tcp://", and "coaps+ws://" {{!RFC8323}}) for the retrieval of MUD URLs.
-
-TODO: Make final decision if still relevant
--->
-
-<!-- In theory, the permission for using secure CoAP also allows for the hosting of MUD files on IoT devices themselves.
-However, since MUD files must be encoded as JSON {{!RFC8259}}, this practice is discouraged for constrained devices as of writing this document and should only be considered once a more efficient encoding format, such as CBOR {{!RFC8949}}, has been specified for the use with MUD files.
-Such a specification is out of this document's scope, though. -->
 Therefore, this document introduces a number of additional ways for distributing
 MUD URLs -- such as well-known URIs and parameters for the CoRE Link-Format --
 which are better suited for constrained devices.
