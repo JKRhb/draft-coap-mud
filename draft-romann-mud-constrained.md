@@ -180,7 +180,7 @@ In the following, we will first outline these additional means for exposing MUD
 URLs before going into more detail regarding potential exposure and discovery
 flows.
 
-## MUD CoAP Payloads
+## MUD CoAP Payloads {#mud-payloads}
 
 - Text/Plain
     - text/mud-url+plain
