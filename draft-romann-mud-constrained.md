@@ -55,12 +55,12 @@ to properly function.
 While {{!RFC8520}} contemplates the use of CoAP-related {{!RFC7252}} policies,
 the MUD URL discovery methods it specifies (DHCP/DHCPv6, LLDP, and X.509
 certificates) are not well-suited for constrained environments (e.g., 802.15.4
-networks using 6LoWPAN).
+networks using 6LoWPAN and SLAAC).
 
 Therefore, this document introduces a number of additional ways for distributing
 MUD URLs -- such as well-known URIs and parameters for the CoRE Link-Format --
 which are better suited for constrained devices.
-Furthermore, using COSE objects, Things can distribute a signed MUD URL which
+Furthermore, using CBOR Web Tokens (CWTs), Things can distribute a signed MUD URL which
 allows MUD managers to better validate the authenticity of both the URL itself
 and the associated MUD file.
 
