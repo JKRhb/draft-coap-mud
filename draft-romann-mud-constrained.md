@@ -190,15 +190,15 @@ Conversely, in environments where multicast is not an issue and things might be 
 In this specification, this will be referred to as the "Receiver-initiated" submission flow.
 
 ### Using the MUD-URL Resource (Receiver-initiated)
-In the Receiver-initiated flow, Things provide a CoAP resource discoverable by the means provided in [REF] <!-- TODO REF resource discovery -->, which is then requested by MUD receivers to retrieve the MUD-URL.
+In the Receiver-initiated flow, Things provide a CoAP resource discoverable by the means provided in {{general_discovery}}, which is then requested by MUD receivers to retrieve the MUD-URL.
 
 <!-- TODO ascii-drawing of this resource -->
 
 In general, the Receiver-initiated MUD-URL flow can be divided into these steps:
 
 1.  After joining the network, the Thing starts providing a CoAP resource to retrieve the MUD-URL.
-    This resource should provide the MUD-URL in one of the formats specified in [REF] <!-- TODO REF MUD CoAP Payloads -->.
-    It also makes this resource discoverable for MUD receivers using the methods specified in [REF] <!-- TODO REF resource discovery -->.
+    This resource should provide the MUD-URL in one of the formats specified in {{general_payloads}}.
+    It also makes this resource discoverable for MUD receivers using the methods specified in {{general_discovery}}.
 
 2.  The MUD Receiver discovers the resource using the aforementioned methods.
     Depending on the method of discovery, this could for example happen using a periodic scan for devices, e.g., by periodically requesting a well-known URI using multicast.
@@ -217,14 +217,14 @@ In the Thing-initiated flow, Things discovery a submission resource provided by 
 This flow can be divided into these general steps:
 
 1.  The MUD Receiver provides a CoAP resource that Things can submit their MUD-URLs to.
-    It also makes itself discoverable for Things using the methods specified in [REF] <!-- TODO Ref Discovery -->.
+    It also makes itself discoverable for Things using the methods specified in {{general_discovery}}.
 
 2.  The Thing connects to the network.
     After connecting, it discovers the MUD-URL submission resource using the aforementioned methods.
 
 3.  The Thing submits the MUD-URL to the previously discovered URI.
     To do so, it performs a CoAP request to the discovered URI with the POST method.
-    The MUD-URL is contained as the message payload in this request using one of the content formats defined in [REF] <!-- TODO MUD CoAP Payloads -->.
+    The MUD-URL is contained as the message payload in this request using one of the content formats defined in {{general_payloads}}.
     Receivers MAY limit their accepted Content-Formats to ones with an authentication level.
 <!-- TODO message response/response code indicating success? -->
 
@@ -236,34 +236,6 @@ MUD Receivers that conform to this specification MUST support both formats.
 
 ### Plain URL
 The easiest method of transmitting MUD-URLs is using a plain text payload containing only the MUD-URL.
-While this method has the advantage of simplicity, it does not contain any additional information that could be used by a MUD receiver to authenticate the supplied MUD-URL.
-
-CoAP requests and responses that use this format MUST use the Content-Format option with the value corresponding to the "application/mud-url+plain" media type.
-
-### MUD-URLs inside of CBOR Web Tokens
-Previous methods of transmitting MUD-URLs do not allow for authentication of supplied MUD URLs.
-To accomodate for environments where authentication of MUD-URLs is desired, it is also possible to include the MUD-URL as a claim inside of a CBOR Web Token {{!RFC8392}}.
-This allows for MUD receivers or MUD controllers to verify the authenticity of the provided MUD-URL.
-
-CBOR Web Tokens that contain MUD-URL information have the following properties:
-- The MUD-URL is contained as an ASCII-encoded string in the "mud-url" claim.
-- The Token MAY contain Proof-of-Possession claims {{!RFC8747}}.
-  If it does, the MUD receiver MUST verify that the device is in possession of the key specified in the cnf claim.
-  <!-- TODO specify PoP mechanism in flow section -->
-- The Token MAY contain an expiry time.
-  If an expiry time is specified, the MUD-URL should be resubmitted or requested again shortly before the original CWT expires.
-  Note that using an expiry time could cause problems if the device is unable to perform a refresh, e.g., due to a power outage.
-  <!-- TODO maybe be more specific regarding the time where the refresh should happen -->
-
-CoAP requests and responses that use this format MUST use the Content-Format option with the value corresponding to the "application/mud-url+cwt" media type.
-
-## MUD CoAP Payloads
-CoAP allows transmission of payloads in different formats.<!-- TODO this sentence seems clunky -->
-For the purposes of this specification, we will define two formats for transmitting MUD-URLs, which are suitable for different environments.
-MUD receivers that conform to this specification MUST support both formats.
-
-### Plain URL
-The simplest method of transmitting MUD-URLs is using a plain text payload containing only the MUD-URL.
 While this method has the advantage of simplicity, it does not contain any additional information that could be used by a MUD receiver to authenticate the supplied MUD-URL.
 
 CoAP requests and responses that use this format MUST use the Content-Format option with the value corresponding to the "application/mud-url+plain" media type.
@@ -379,40 +351,40 @@ In general, it is recommended that MUD receivers support as much of the specific
 
 ### Discovery
 
-For the discovery process described in {{#general_discovery}}, the following considerations apply to MUD receivers:
+For the discovery process described in {{general_discovery}}, the following considerations apply to MUD receivers:
 
-- MUD receivers MUST regularly perform a CoAP request to the "All MUD CoAP Nodes" multicast address for the `/.well-known/mud-url` URI
+- MUD receivers MUST regularly perform a CoAP request to the "All MUD CoAP Nodes" multicast address for the `/.well-known/mud-url` URI.
 
-- MUD receivers MUST regularly query any CoRE Resource Directories relevant for the subnet they are responsible for
+- MUD receivers MUST regularly query any CoRE Resource Directories relevant for the subnet they are responsible for.
 
-- MUD receivers MUST register their submission resource to any CoRE Resource Directories relevant for the subnet they are responsible for
+- MUD receivers MUST register their submission resource to any CoRE Resource Directories relevant for the subnet they are responsible for.
 
 ### MUD-URL Submission Resource
 
 <!-- TODO some more explanatory text -->
 
-- MUD receivers MUST provide a submission resource
+- MUD receivers MUST provide a submission resource.
 
-- MUD receivers MAY indicate failure of MUD-URL submission using a CoAP Error Code
+- MUD receivers MAY indicate failure of MUD-URL submission using a CoAP Error Code.
 
 ### MUD-URL Resource
 
 <!-- TODO some more text -->
 
-- MUD receivers MUST request MUD-URLs known to them <!-- duh -->
+- MUD receivers MUST request MUD-URLs known to them. <!-- duh -->
 
-- MUD receivers MUST re-request MUD-URLs submitted as a CWT claim if the CWT has an expiry time that passed
+- MUD receivers MUST re-request MUD-URLs submitted as a CWT claim if the CWT has an expiry time that passed.
 
 ### MUD-URL Payload
 
 <!-- TODO explanatory text -->
 - MUD receivers SHOULD treat devices for which MUD-URL retrieval failed as devices the same way as devices that do not provide a MUD-URL at all.
 
-- MUD receivers MUST support the plain MUD-URL payload
+- MUD receiver implementations MUST support the plain MUD-URL payload, although support for these MAY be disabled by policy.
 
-- MUD receivers SHOULD support the CWT MUD-URL claim
+- MUD receivers SHOULD support the CWT MUD-URL claim.
 
-- If the CWT claim is supported, MUD receivers MUST be configured with a policy as to which signers are authorized to sign tokens
+- If the CWT claim is supported, MUD receivers MUST be configured with a policy as to which signers are authorized to sign tokens.
 
 <!--
 - Discovery
