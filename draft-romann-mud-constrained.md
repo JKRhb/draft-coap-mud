@@ -206,8 +206,8 @@ In general, the Receiver-initiated MUD-URL flow can be divided into these steps:
 
 3.  The MUD Receiver retrieves the discovered resource for devices where the MUD controller does not have an up-to-date MUD-URL stored.
     To do so, it performs a CoAP request for the discovered MUD-URL resource URI using the GET method, which is responded to with the appropriate payload.
-    Receivers MUST specify the desired payload formats using the Accept option <!-- TODO cite -->.
-    If multiple payload formats are specified, the Thing MUST prefer ones that provide a greater degree of authenticity protection (i.e., prefer CWTs over plaintext transmission).
+    Receivers MUST specify their desired payload format using the Accept option {{Section 5.10.4 of RFC7252}}.
+    During content negotiation, Receivers MUST start with requesting the Content-Format that provides the greatest degree of authenticity protection (i.e., prefer CWTs over plaintext transmission).
 
 <!-- TODO advantages/disadvantages? -->
 
@@ -225,7 +225,7 @@ This flow can be divided into these general steps:
 3.  The Thing submits the MUD-URL to the previously discovered URI.
     To do so, it performs a CoAP request to the discovered URI with the POST method.
     The MUD-URL is contained as the message payload in this request using one of the content formats defined in [REF] <!-- TODO MUD CoAP Payloads -->.
-    <!-- TODO allow receiver to limit acceptable content formats? -->
+    Receivers MAY limit their accepted Content-Formats to ones with an authentication level.
 <!-- TODO message response/response code indicating success? -->
 
 <!-- TODO advantages/disadvantages? -->
@@ -263,7 +263,7 @@ For the purposes of this specification, we will define two formats for transmitt
 MUD receivers that conform to this specification MUST support both formats.
 
 ### Plain URL
-The easiest method of transmitting MUD-URLs is using a plain text payload containing only the MUD-URL.
+The simplest method of transmitting MUD-URLs is using a plain text payload containing only the MUD-URL.
 While this method has the advantage of simplicity, it does not contain any additional information that could be used by a MUD receiver to authenticate the supplied MUD-URL.
 
 CoAP requests and responses that use this format MUST use the Content-Format option with the value corresponding to the "application/mud-url+plain" media type.
@@ -379,7 +379,7 @@ In general, it is recommended that MUD receivers support as much of the specific
 
 ### Discovery
 
-For the discovery process described in [](#general_discovery), the following considerations apply to MUD receivers:
+For the discovery process described in {{#general_discovery}}, the following considerations apply to MUD receivers:
 
 - MUD receivers MUST regularly perform a CoAP request to the "All MUD CoAP Nodes" multicast address for the `/.well-known/mud-url` URI
 
