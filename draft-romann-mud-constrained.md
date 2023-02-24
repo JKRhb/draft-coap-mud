@@ -190,6 +190,7 @@ Conversely, in environments where multicast is not an issue and things might be 
 In this specification, this will be referred to as the "Receiver-initiated" submission flow.
 
 ### Using the MUD-URL Resource (Receiver-initiated)
+
 In the Receiver-initiated flow, Things provide a CoAP resource discoverable by the means provided in {{general_discovery}}, which is then requested by MUD receivers to retrieve the MUD-URL.
 
 <!-- TODO ascii-drawing of this resource -->
@@ -212,6 +213,7 @@ In general, the Receiver-initiated MUD-URL flow can be divided into these steps:
 <!-- TODO advantages/disadvantages? -->
 
 ### Using the MUD-URL Submission Resource (Thing-initiated)
+
 In the Thing-initiated flow, Things discovery a submission resource provided by the MUD Receiver and submit their MUD-URLs to this resource.
 
 This flow can be divided into these general steps:
@@ -265,7 +267,9 @@ To do so, the following procedures SHOULD be used.
 Both of the following procedures use the establishment of a DTLS session using the PoP key in order to prove the possession of the key, similarly to the procedures defined in {{!RFC9202}}.
 
 <!-- TODO required ciphers? -->
+
 ### For the Thing-initiated Flow
+
 1.  After submitting the MUD-URL, the MUD Receiver parses the token.
     If it detects Proof-of-Possession claims, the receiver MUST reply with a 4.01 (Unauthorized) CoAP response code and reject the token for now.
     If the original submission request was not performed using CoAPS, the Receiver MUST also return a set of key information that can be used to establish a CoAP+DTLS session with it, as well as a CoAPS URI indicating the location of the secured submission resource.
