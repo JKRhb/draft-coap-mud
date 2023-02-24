@@ -180,7 +180,7 @@ In the following, we will first outline these additional means for exposing MUD
 URLs before going into more detail regarding potential exposure and discovery
 flows.
 
-## MUD CoAP Payloads
+## MUD CoAP Payloads {#mud-payloads}
 
 - Text/Plain
     - text/mud-url+plain
@@ -238,10 +238,48 @@ In the remainder of this section, we will outline potential use-cases and proced
 
 ## Thing Behavior
 
-- Exposition/Announcing
-    - (same as General Architecture/Discovery)
-- Providing the MUD-URL Resource
-    - (guidance for Content Format, static pre-generation(?), etc.)
+### Exposing MUD URLs
+
+Things MAY expose their MUD URL using a dedicated resource hosted under
+`/.well-known/mud-url`.
+If a MUD URL is exposed this way, the resource MUST offer at least one of the
+specified serialization methods and MUST allow clients to choose between them
+using the Accept option, if provided.
+If the Thing supports resource discovery using a `/.well-known/core` resource,
+MUD URL resources SHOULD be advertised there using the CoRE Link-Format
+{{!RFC6690}}, indicating the available Content-Formats using the `ct` parameter.
+
+### Registering MUD URLs with MUD Managers
+
+Things MAY actively register their MUD URLs with MUD managers offering a
+registration interface.
+To perform the registration process, Things can perform a discovery
+process using the CoRE Link Format or directly include their MUD URL as a
+payload of a CoAP POST request.
+If Things are actively registering their MUD URLs with MUD managers, they
+SHOULD regularly repeat the process to keep interested parties informed about
+their presence and their associated MUD URL.
+
+Using the CoRE Link Format, Things MAY send a GET request to the All CoAP Nodes
+or the All MUD Managers multicast address, requesting the `/.well-known/core`
+resources and including an (optional) query parameter `rt=mud.url-register`.
+After filtering the obtained links for the Resource Type `mud.url-register` to
+identify available submission interfaces, the Thing MAY then send a unicast
+POST request to the discovered MUD manager, containing the MUD URL as a payload
+and a corresponding Content-Format option.
+Alternatively, a Thing MAY also use a CoRE Resource Directory {{!RFC9176}} to
+perform the discovery process.
+
+Things MAY also directly send a POST request containing the MUD URL as
+a payload and a corresponding Content-Format option via unicast or to the All
+CoAP Nodes or the All MUD Managers multicast address, using the well-known URI
+`/.well-known/mud-submission`.
+
+### Finding MUD URLs of Other Things
+
+If a Thing should be interested in the MUD URLs of one or more of its peers, it
+MAY use the same mechanisms specified for MUD Receivers described in the
+following section.
 
 ## Receiver Behavior
 
