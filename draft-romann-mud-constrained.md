@@ -225,7 +225,8 @@ This flow can be divided into these general steps:
 3.  The Thing submits the MUD-URL to the previously discovered URI.
     To do so, it performs a CoAP request to the discovered URI with the POST method.
     The MUD-URL is contained as the message payload in this request using one of the content formats defined in {{general_payloads}}.
-    Receivers MAY limit their accepted Content-Formats to ones with an authentication level.
+    Receivers MAY allow limiting the accepted Content-Formats to ones that provide some level of authenticity for the MUD-URL using policies.
+    However, implementations MUST also support unauthenticated MUD-URL transmissions if no policy forbids it.
 <!-- TODO message response/response code indicating success? -->
 
 <!-- TODO advantages/disadvantages? -->
@@ -249,6 +250,7 @@ CBOR Web Tokens that contain MUD-URL information have the following properties:
 - The MUD-URL is contained as an ASCII-encoded string in the "mud-url" claim.
 - The Token MAY contain Proof-of-Possession claims {{!RFC8747}}.
   If it does, the MUD receiver MUST verify that the device is in possession of the key specified in the cnf claim.
+  Proof-of-Possession claims that are transmitted over CoAP without DTLS/TLS MUST represent public keys, Receivers MUST treat any symmetric keys sent over insecure channels as invalid/compromised.
   <!-- TODO specify PoP mechanism in flow section -->
 - The Token MAY contain an expiry time.
   If an expiry time is specified, the MUD-URL should be resubmitted or requested again shortly before the original CWT expires.
@@ -256,6 +258,30 @@ CBOR Web Tokens that contain MUD-URL information have the following properties:
   <!-- TODO maybe be more specific regarding the time where the refresh should happen -->
 
 CoAP requests and responses that use this format MUST use the Content-Format option with the value corresponding to the "application/mud-url+cwt" media type.
+
+## Proof-of-Possession for CBOR Web Tokens with MUD-URLs {#general_pop}
+If the MUD-URL is transmitted as a CBOR Web Token that includes Proof-of-Possession claims, CoAPS MUST be used to perform proof-of-possession.
+To do so, the following procedures SHOULD be used.
+Both of the following procedures use the establishment of a DTLS session using the PoP key in order to prove the possession of the key, similarly to the procedures defined in {{!RFC9202}}.
+
+<!-- TODO required ciphers? -->
+### For the Thing-initiated Flow
+1.  After submitting the MUD-URL, the MUD Receiver parses the token.
+    If it detects Proof-of-Possession claims, the receiver MUST reply with a 4.01 (Unauthorized) CoAP response code and reject the token for now.
+    If the original submission request was not performed using CoAPS, the Receiver MUST also return a set of key information that can be used to establish a CoAP+DTLS session with it, as well as a CoAPS URI indicating the location of the secured submission resource.
+    <!-- TODO key format? -->
+2.  The Thing then repeats the submission request using its own key information, the Receiver's key information, and the provided URI.
+3.  During the DTLS handshake, the Receiver MUST require the Thing to use the Proof-of-Possession key included in the originally submitted token in order to successfully establish a DTLS session.
+4.  After the DTLS handshake, the Thing has proven possession of the key included in the CWT to the MUD Receiver, which can then treat the CWT as valid.
+<!-- TODO do we still want to re-send the CWT? -->
+
+### For the Receiver-initiated Flow
+1. After receiving the MUD-URL from a request (e.g., a multicast request), the MUD Receiver parses the token.
+   If it detects Proof-of-Possession claims, the receiver MUST continue with the following procedure before treating the CWT as valid.
+2. The receiver repeats the MUD-URL request, this time using DTLS.
+   During the DTLS handshake, the Receiver must require the Thing to use the Proof-of-Possession key included in the originally received token in order to successfully establish the DTLS session.
+3. After the DTLS handshake, the Thing has proven possession of the key included in the CWT to the MUD Receiver, which can then treat the CWT as valid.
+   <!-- TODO Unsure if DTLS even works without mutual auth, but i dont see why it shouldn't   -->
 
 ## Resource Discovery {#general_discovery}
 
