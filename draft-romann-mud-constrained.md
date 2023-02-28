@@ -398,9 +398,9 @@ For the discovery process described in {{general_discovery}}, the following cons
 
 - MUD receivers MUST regularly perform a CoAP request to the "All MUD CoAP Nodes" multicast address for the `/.well-known/mud-url` URI.
 
-- MUD receivers that support IPv6 devices MUST join the "All MUD CoAP Nodes" multicast address.
+- MUD receivers that support IPv6 devices MUST join the "All MUD CoAP Nodes" IPv6 multicast address.
 
-- MUD receivers that support IPv4 devices MUST join the "All CoAP Nodes" multicast address.
+- MUD receivers that support IPv4 devices MUST join the "All CoAP Nodes" IPv4 multicast address.
 
 - MUD receivers SHOULD regularly query any CoRE Resource Directories relevant for the subnet they are responsible for.
 
@@ -455,8 +455,8 @@ For Thing manufacturers that intend to implement this specification:
 - It is recommended to use CBOR Web Token-encoded MUD URLs whereever possible to allow for better integrity checking
 - Using expiry times for CWTs containing MUD URLs can be advantageous, but also has its shortcomings.
   Most notably, expiry times are not recommended if it is possible for Things to reach a state where they have neither the means to update their CWT nor a non-expired token in their persistent storage
-  As devices may be out of service for longer periods at a time, where they would not have the ability to refresh CWTs, this state is unavoidable for the vast majority of devices.
-- In order to use expiry times anyways, manufacturers could use two different CWTs: A backup CWT without an expiry time with a MUD URL pointing to a very constrained MUD file that only allows updating the main CWT, and a main CWT that has an expiry time but has a more broad MUD file referenced in it.
+  As devices may be out of service for longer periods of time, preventing them from refreshing CWTs, this state is unavoidable for the vast majority of devices.
+- In order to use expiry times anyways, manufacturers could use two different CWTs: A backup CWT without an expiry time with a MUD URL pointing to a very restricted MUD file that only allows updating the main CWT, and a main CWT that has an expiry time but has a more broad MUD file referenced in it.
 
 For network operators:
 Network operators SHOULD specify a policy that describes:
