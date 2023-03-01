@@ -312,8 +312,9 @@ This document introduces a new well-known URI for discovering MUD URLs directly:
 This MUD file MUST describe the device the URL was retrieved from or is referring to within a list of CoRE links.
 
 {{!RFC7252}} registers one IPv4 and one IPv6 address each for the purpose of CoAP multicast.
-In addition to these already existing "All CoAP Nodes" multicast addresses, this document defines additional "All MUD CoAP Nodes" multicast addresses that can be used to address only the subset of CoAP Nodes that support MUD.
+In addition to these already existing "All CoAP Nodes" multicast addresses, this document defines an additional "All MUD CoAP Nodes" IPv6 multicast addresses that can be used to address only the subset of CoAP Nodes that support MUD.
 If a device exposes a MUD URL via CoAP, it SHOULD join the respective multicast groups for the IP versions it supports.
+Lastly, this document also defines an additional "All MUD Receivers" IPv6 multicast address that can be used by Things to interact with MUD receivers in their vicinity.
 
 ### CoRE Link Format and CoRE Resource Directories
 
@@ -366,7 +367,7 @@ SHOULD regularly repeat the process to keep interested parties informed about
 their presence and their associated MUD URL.
 
 Using the CoRE Link Format, Things MAY send a GET request to the All CoAP Nodes
-or the All MUD Managers multicast address, requesting the `/.well-known/core`
+(IPv4) or the All MUD Receivers (IPv6) multicast address, requesting the `/.well-known/core`
 resources and including an (optional) query parameter `rt=mud.url-register`.
 After filtering the obtained links for the Resource Type `mud.url-register` to
 identify available submission interfaces, the Thing MAY then send a unicast
@@ -377,7 +378,7 @@ perform the discovery process.
 
 Things MAY also directly send a POST request containing the MUD URL as
 a payload and a corresponding Content-Format option via unicast or to the All
-CoAP Nodes or the All MUD Managers multicast address, using the well-known URI
+CoAP Nodes (IPv4) or the All MUD Receivers (IPv6) multicast address, using the well-known URI
 `/.well-known/mud-submission`.
 
 ### Finding MUD URLs of Other Things
@@ -396,9 +397,11 @@ In general, it is recommended that MUD receivers support as much of the specific
 
 For the discovery process described in {{general_discovery}}, the following considerations apply to MUD receivers:
 
-- MUD receivers MUST regularly perform a CoAP request to the "All MUD CoAP Nodes" multicast address for the `/.well-known/mud-url` URI.
+- MUD receivers that support IPv6 SHOULD regularly perform a CoAP request to the "All MUD CoAP Nodes" multicast address for the `/.well-known/mud-url` URI.
 
-- MUD receivers that support IPv6 devices MUST join the "All MUD CoAP Nodes" IPv6 multicast address.
+- MUD receivers that support IPv4 SHOULD regularly perform a CoAP request to the "All CoAP Nodes" multicast address for the `/.well-known/mud-url` URI.
+
+- MUD receivers that support IPv6 devices MUST join the "All MUD Receivers" IPv6 multicast address.
 
 - MUD receivers that support IPv4 devices MUST join the "All CoAP Nodes" IPv4 multicast address.
 
@@ -411,6 +414,8 @@ For the discovery process described in {{general_discovery}}, the following cons
 This section describes the behavior for MUD receivers regarding the Thing-initiated submission flow:
 
 - MUD receivers MUST provide a submission resource under the `/.well-known/mud-submission` well-known URI.
+
+- MUD receivers SHOULD include their submission resource in any CoRE Link Format descriptions of their resources (both in `/.well-known/core` and in CoRE RD registrations, if applicable).
 
 - MUD receivers MAY indicate failure of MUD-URL submission using a CoAP Error Code.
   If the submitted MUD URL is encoded in a CBOR Web Token including proof-of-possession claims, MUD receivers MUST return the appropriate error code to initiate the proof of possession flow as described in {{general_pop}}.
