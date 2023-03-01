@@ -293,17 +293,15 @@ Lastly, this document also defines an additional "All MUD Receivers" IPv6 multic
 
 Resources which either host MUD URLs or MUD files MAY be indicated using the CoRE Link Format {{!RFC6690}}.
 For this purpose, additional link parameters are defined:
-<!-- TBD: Could also use the link-relation described-by with resource types mud-file or mud-file -->
-With the link relation-types `mud-file` and `mud-url`, a link MAY be annotated as pointing to a MUD file or a MUD URL, respectively.
-Note that the use of these relation-types is not limited to constrained environments and can also be used to annotate links in other contexts, such as a Web of Things Thing Description {{?W3C.wot-thing-description11}}.
+With the resource-types `mud-file` and `mud-url`, a link MAY be annotated as pointing to a MUD file or a MUD URL, respectively.
+If a MUD URL is included as a resource in a list of CoRE web links, the supported Content-Formats MUST be indicated using the `ct` parameter.
 
-MUD Managers or other devices can send a GET requests to a CoAP server for `/.well-known/core` and get in return a list of hypermedia links to other resources hosted in that server, encoded using the CoRE Link-Format {{!RFC6690}}.
-Among those, it will get the path to the resource exposing the MUD URL, for example `/.well-known/mud-url` and link relation-types like `rel=mud-url`.
+MUD Receivers or other devices can send a GET requests to a CoAP server for `/.well-known/core` and get in return a list of hypermedia links to other resources hosted in that server, encoded using the CoRE Link-Format {{!RFC6690}}.
+Among those, it will get the path to the resource exposing the MUD URL, for example `/.well-known/mud-url` and resource-types like `rt=mud-url`.
 
 By using CoRE Resource Directories {{?RFC9176}}, devices can register a MUD file or MUD URL and use the directory as a MUD repository, making it discoverable with the usual RD Lookup steps.
 A MUD manager itself MAY also act as a Resource Directory, directly applying the policies from registered MUD files to the network.
 In addition to the registration endpoint defined in {{?RFC9176}}, MUD managers MAY define a separate registration interface when acting as a CoRE RD.
-<!-- TODO: Decide if this makes sense -->
 
 # Obtaining a MUD URL in Constrained Environments
 
