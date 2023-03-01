@@ -457,7 +457,7 @@ Regarding the actual MUD URL payload transmitted using CoAP, the following consi
 (Very WIP for now)
 
 The security considerations from {{!RFC8520}} also apply to this document.
-Regarding CoAP specifics, {{!draft-irtf-t2trg-amplification-attacks}} provides information on possible attack scenarios.
+Regarding CoAP specifics, {{!I-D.irtf-t2trg-amplification-attacks}} provides information on possible attack scenarios.
 Additionally, the following considerations should be taken into account.
 
 
