@@ -47,10 +47,12 @@ TODO: Should be updated.
 
 # Introduction and Overview
 
-Manufacturer Usage Descriptions (MUDs) have been specified in {{!RFC8520}}.
-As the RFC states, the goal of MUD is to provide a means for end devices to
-signal to the network what sort of access and network functionality they require
-to properly function.
+Manufacturer Usage Descriptions (MUDs), which have been specified in {{!RFC8520}},
+provide a means for end devices to indicate to the network what sort of access and
+network functionality they require to properly function.
+This information enables automatic configuration of firewall appliances to limit
+device network access to the specified network resources only, which in turn reduces
+the attack surface for MUD-capable devices.
 
 While {{!RFC8520}} contemplates the use of CoAP-related {{!RFC7252}} policies,
 the MUD URL discovery methods it specifies (DHCP/DHCPv6, LLDP, and X.509
@@ -58,11 +60,11 @@ certificates) are not well-suited for constrained environments (e.g., 802.15.4
 networks using 6LoWPAN and SLAAC).
 
 Therefore, this document introduces a number of additional ways for distributing
-MUD URLs -- such as well-known URIs and parameters for the CoRE Link-Format --
+MUD URLs using CoAP -- such as well-known URIs and parameters for the CoRE Link-Format --
 which are better suited for constrained devices.
-Furthermore, using CBOR Web Tokens (CWTs), Things can distribute a signed MUD URL which
-allows MUD managers to better validate the authenticity of both the URL itself
-and the associated MUD file.
+Furthermore, this document specifies a method of encoding MUD URLs in (signed)
+CBOR Web Tokens (CWTs), which allows MUD managers to better validate the
+authenticity of both the URL itself and the associated MUD file.
 
 The rest of this document is structured as follows: ... TODO
 
@@ -81,17 +83,26 @@ main network components relevant for this document:
 The *Thing* that wants to obtain network access via a Router or Switch, and the
 *MUD Manager* that processes MUD URLs, retrieves MUD files from the
 MUD file server, and configures other network components accordingly.
-Both the Thing and the MUD manager can play more active roles when
+For the purposes of this document, we extend the MUD architecture with another
+component: The MUD receiver.
+The MUD receiver is the device responsible for providing and/or performing CoAP
+requests to resources intended for MUD URL delivery.
+While this component can also be a part of the same physical device as the MUD
+Manager or the router/switch, this is not required.
+Both the Thing and the MUD receiver can play active roles when
 using CoAP {{!RFC7252}} for exposing and discovering MUD URLs.
 
 A general overview of the MUD architecture adjusted for using CoAP in a
 constrained environment can be seen in {{arch1-fig}}.
-Here, we can see that both the Thing and the MUD manager (as the recipient of
+Here, we can see that both the Thing and the MUD receiver (as the recipient of
 the MUD URLs) may initiate the MUD discovery process:
 The Thing can contact and register with MUD URL recipients, e.g. by sending a
 CoAP POST request via Multicast, addressing a well-known registration endpoint.
 Conversely, MUD recipients can initiate the discovery process, e.g. by sending a
 COAP GET request to a well-known URI via multicast.
+
+Note that the protocol used for communication between the MUD Receiver and
+MUD Manager is not specified in this document and implementation-specific.
 
 TODO: Refine diagram
 
@@ -112,16 +123,16 @@ package "MUD Architecture" {
 -->
 ~~~
 ...................................................
-.                                  ____________   .
-.                                 +            +  .
-.             +------------------ |    MUD     |  .
-.   get URL   |                   |  Manager   |  .
-.   (coaps)   |                   +____________+  .
-.  MUD file   |                         .         .
+.         __________ Forward valid ____________   .
+.        +          +  MUD-URLs   +            +  .
+.        |   MUD    +------------>+    MUD     |  .
+.        | Receiver |             |  Manager   |  .
+.        +__________+             +____________+  .
+.             ^                         .         .
 .             |                         .         .
-.             |     End system network  .         .
-.             |                         .         .
-.           __v____                 _________     .
+. Provide MUD |     End system network  .         .
+.  URL (CoAP) |                         .         .
+.           __+____                 _________     .
 .          +       + (DHCP et al.) + router  +    .
 .     +--- | Thing +---->MUD URL+->+   or    |    .
 .     |MUD +_______+               | switch  |    .
@@ -133,36 +144,8 @@ package "MUD Architecture" {
 
 Optionally, Things may also provide additional means for proving the
 authenticity of the MUD URL associated with them.
-For that purpose, this document specifies how to use CBOR Object Signing and
-Encryption (COSE) {{!RFC8152}} objects to attach a manufacturer's signature to
-a MUD URL.
-Using this additional feature, the MUD architecture is augmented once more, as
-visualized in {{arch2-fig}}.
-
-TODO: Replace diagram
-
-~~~
-...................................................
-.                                  ____________   .
-.                                 +            +  .
-.             +------------------ |    MUD     |  .
-.   get URL   |                   |  Manager   |  .
-.   (coaps)   |                   +____________+  .
-.  MUD file   |                         .         .
-.             |                         .         .
-.             |     End system network  .         .
-.             |                         .         .
-.           __v____                 _________     .
-.          +       + (DHCP et al.) + router  +    .
-.     +--- | Thing +---->MUD URL+->+   or    |    .
-.     |MUD +_______+               | switch  |    .
-.     |File  |                     +_________+    .
-.     +------+                                    .
-...................................................
-~~~
-{: #arch2-fig title="MUD Discovery using COSE objects." artwork-align="center"}
-
-TODO: Add more architecture stuff here.
+For this purpose, this document specifies how to use CBOR Web Tokens {{!RFC8392}}
+to include MUD URLs as part of a signed and therefore authenticable token.
 
 # General Considerations
 
@@ -176,12 +159,15 @@ example, the CoRE Link-Format.
 This Web Linking approach also allows Things to submit MUD URLs to a Directory
 Service.
 
-In the following, we will first outline these additional means for exposing MUD
-URLs before going into more detail regarding potential exposure and discovery
-flows.
+The first part of this section describes the mechanisms that use a dedicated
+MUD URL CoAP resource.
+In the later parts of this section, discovery methods for this MUD URL resource
+are specified.
+As part of the discovery method description, a method of providing MUD URLs directly
+using the CoRE link format is also described.
 
 ## MUD-URL CoAP Submission Flows {#general_submission-flows}
-In general, this specification provides two ways by which a MUD-URL transmission can be performed using CoAP.
+In general, this specification provides two ways by which a MUD-URL transmission can be performed using an explicit MUD URL resource.
 
 In environments where many Things need to be managed over several subnets and where multicast usage is not desirable, it can be advantageous if the MUD receiver provides a CoAP resource to perform submissions to and the Things initiate the MUD-URL submission.
 This will be referred to as the "Thing-initiated" submission flow for the remainder of this specification.
@@ -203,9 +189,8 @@ In general, the Receiver-initiated MUD-URL flow can be divided into these steps:
 
 2.  The MUD Receiver discovers the resource using the aforementioned methods.
     Depending on the method of discovery, this could for example happen using a periodic scan for devices, e.g., by periodically requesting a well-known URI using multicast.
-    Other methods of discovery might also provide a mechanism to directly notify the Receiver of new devices, in which case this method SHOULD be preferred over periodic scanning.
 
-3.  The MUD Receiver retrieves the discovered resource for devices where the MUD controller does not have an up-to-date MUD-URL stored.
+3.  The MUD Receiver retrieves the discovered resource for devices where the MUD controller does not have an up-to-date MUD URL in memory.
     To do so, it performs a CoAP request for the discovered MUD-URL resource URI using the GET method, which is responded to with the appropriate payload.
     Receivers MUST specify their desired payload format using the Accept option {{Section 5.10.4 of RFC7252}}.
     During content negotiation, Receivers MUST start with requesting the Content-Format that provides the greatest degree of authenticity protection (i.e., prefer CWTs over plaintext transmission).
@@ -227,8 +212,8 @@ This flow can be divided into these general steps:
 3.  The Thing submits the MUD-URL to the previously discovered URI.
     To do so, it performs a CoAP request to the discovered URI with the POST method.
     The MUD-URL is contained as the message payload in this request using one of the content formats defined in {{general_payloads}}.
-    Receivers MAY allow limiting the accepted Content-Formats to ones that provide some level of authenticity for the MUD-URL using policies.
-    However, implementations MUST also support unauthenticated MUD-URL transmissions if no policy forbids it.
+    Receivers MAY be configured to limit the accepted Content-Formats to ones that provide some level of authenticity for the MUD-URL based on policy.
+    However, receiver implementations MUST also support unauthenticated MUD-URL transmissions if no policy forbids it.
 <!-- TODO message response/response code indicating success? -->
 
 <!-- TODO advantages/disadvantages? -->
@@ -249,6 +234,7 @@ To accomodate for environments where authentication of MUD-URLs is desired, it i
 This allows for MUD receivers or MUD controllers to verify the authenticity of the provided MUD-URL.
 
 CBOR Web Tokens that contain MUD-URL information have the following properties:
+
 - The MUD-URL is contained as an ASCII-encoded string in the "mud-url" claim.
 - The Token MAY contain Proof-of-Possession claims {{!RFC8747}}.
   If it does, the MUD receiver MUST verify that the device is in possession of the key specified in the cnf claim.
@@ -262,7 +248,7 @@ CBOR Web Tokens that contain MUD-URL information have the following properties:
 CoAP requests and responses that use this format MUST use the Content-Format option with the value corresponding to the "application/mud-url+cwt" media type.
 
 ## Proof-of-Possession for CBOR Web Tokens with MUD-URLs {#general_pop}
-If the MUD-URL is transmitted as a CBOR Web Token that includes Proof-of-Possession claims, CoAPS MUST be used to perform proof-of-possession.
+If the MUD-URL is transmitted as a CBOR Web Token that includes Proof-of-Possession claims, the proof-of-possession claim SHOULD be verified.
 To do so, the following procedures SHOULD be used.
 Both of the following procedures use the establishment of a DTLS session using the PoP key in order to prove the possession of the key, similarly to the procedures defined in {{!RFC9202}}.
 
@@ -299,24 +285,23 @@ This document introduces a new well-known URI for discovering MUD URLs directly:
 This MUD file MUST describe the device the URL was retrieved from or is referring to within a list of CoRE links.
 
 {{!RFC7252}} registers one IPv4 and one IPv6 address each for the purpose of CoAP multicast.
-In addition to these already existing "All CoAP Nodes" multicast addresses, this document defines additional "All MUD CoAP Nodes" multicast addresses that can be used to address only the subset of CoAP Nodes that support MUD.
+In addition to these already existing "All CoAP Nodes" multicast addresses, this document defines an additional "All MUD CoAP Nodes" IPv6 multicast addresses that can be used to address only the subset of CoAP Nodes that support MUD.
 If a device exposes a MUD URL via CoAP, it SHOULD join the respective multicast groups for the IP versions it supports.
+Lastly, this document also defines an additional "All MUD Receivers" IPv6 multicast address that can be used by Things to interact with MUD receivers in their vicinity.
 
 ### CoRE Link Format and CoRE Resource Directories
 
 Resources which either host MUD URLs or MUD files MAY be indicated using the CoRE Link Format {{!RFC6690}}.
 For this purpose, additional link parameters are defined:
-<!-- TBD: Could also use the link-relation described-by with resource types mud-file or mud-file -->
-With the link relation-types `mud-file` and `mud-url`, a link MAY be annotated as pointing to a MUD file or a MUD URL, respectively.
-Note that the use of these relation-types is not limited to constrained environments and can also be used to annotate links in other contexts, such as a Web of Things Thing Description {{?W3C.wot-thing-description11}}.
+With the resource-types `mud-file` and `mud-url`, a link MAY be annotated as pointing to a MUD file or a MUD URL, respectively.
+If a MUD URL is included as a resource in a list of CoRE web links, the supported Content-Formats MUST be indicated using the `ct` parameter.
 
-MUD Managers or other devices can send a GET requests to a CoAP server for `/.well-known/core` and get in return a list of hypermedia links to other resources hosted in that server, encoded using the CoRE Link-Format {{!RFC6690}}.
-Among those, it will get the path to the resource exposing the MUD URL, for example `/.well-known/mud-url` and link relation-types like `rel=mud-url`.
+MUD Receivers or other devices can send a GET requests to a CoAP server for `/.well-known/core` and get in return a list of hypermedia links to other resources hosted in that server, encoded using the CoRE Link-Format {{!RFC6690}}.
+Among those, it will get the path to the resource exposing the MUD URL, for example `/.well-known/mud-url` and resource-types like `rt=mud-url`.
 
 By using CoRE Resource Directories {{?RFC9176}}, devices can register a MUD file or MUD URL and use the directory as a MUD repository, making it discoverable with the usual RD Lookup steps.
 A MUD manager itself MAY also act as a Resource Directory, directly applying the policies from registered MUD files to the network.
 In addition to the registration endpoint defined in {{?RFC9176}}, MUD managers MAY define a separate registration interface when acting as a CoRE RD.
-<!-- TODO: Decide if this makes sense -->
 
 # Obtaining a MUD URL in Constrained Environments
 
@@ -341,9 +326,9 @@ If the Thing supports resource discovery using a `/.well-known/core` resource,
 MUD URL resources SHOULD be advertised there using the CoRE Link-Format
 {{!RFC6690}}, indicating the available Content-Formats using the `ct` parameter.
 
-### Registering MUD URLs with MUD Managers
+### Registering MUD URLs with MUD Receivers
 
-Things MAY actively register their MUD URLs with MUD managers offering a
+Things MAY actively register their MUD URLs with MUD receivers offering a
 registration interface.
 To perform the registration process, Things can perform a discovery
 process using the CoRE Link Format or directly include their MUD URL as a
@@ -353,7 +338,7 @@ SHOULD regularly repeat the process to keep interested parties informed about
 their presence and their associated MUD URL.
 
 Using the CoRE Link Format, Things MAY send a GET request to the All CoAP Nodes
-or the All MUD Managers multicast address, requesting the `/.well-known/core`
+(IPv4) or the All MUD Receivers (IPv6) multicast address, requesting the `/.well-known/core`
 resources and including an (optional) query parameter `rt=mud.url-register`.
 After filtering the obtained links for the Resource Type `mud.url-register` to
 identify available submission interfaces, the Thing MAY then send a unicast
@@ -364,7 +349,7 @@ perform the discovery process.
 
 Things MAY also directly send a POST request containing the MUD URL as
 a payload and a corresponding Content-Format option via unicast or to the All
-CoAP Nodes or the All MUD Managers multicast address, using the well-known URI
+CoAP Nodes (IPv4) or the All MUD Receivers (IPv6) multicast address, using the well-known URI
 `/.well-known/mud-submission`.
 
 ### Finding MUD URLs of Other Things
@@ -383,38 +368,50 @@ In general, it is recommended that MUD receivers support as much of the specific
 
 For the discovery process described in {{general_discovery}}, the following considerations apply to MUD receivers:
 
-- MUD receivers MUST regularly perform a CoAP request to the "All MUD CoAP Nodes" multicast address for the `/.well-known/mud-url` URI.
+- MUD receivers that support IPv6 SHOULD regularly perform a CoAP request to the "All MUD CoAP Nodes" multicast address for the `/.well-known/mud-url` URI.
 
-- MUD receivers MUST regularly query any CoRE Resource Directories relevant for the subnet they are responsible for.
+- MUD receivers that support IPv4 SHOULD regularly perform a CoAP request to the "All CoAP Nodes" multicast address for the `/.well-known/mud-url` URI.
 
-- MUD receivers MUST register their submission resource to any CoRE Resource Directories relevant for the subnet they are responsible for.
+- MUD receivers that support IPv6 devices MUST join the "All MUD Receivers" IPv6 multicast group.
+
+- MUD receivers that support IPv4 devices MUST join the "All CoAP Nodes" IPv4 multicast group.
+
+- MUD receivers SHOULD regularly query any CoRE Resource Directories relevant for the subnet they are responsible for.
+
+- MUD receivers SHOULD register their submission resource to any CoRE Resource Directories relevant for the subnet they are responsible for.
 
 ### MUD-URL Submission Resource
 
-<!-- TODO some more explanatory text -->
+This section describes the behavior for MUD receivers regarding the Thing-initiated submission flow:
 
-- MUD receivers MUST provide a submission resource.
+- MUD receivers MUST provide a submission resource under the `/.well-known/mud-submission` well-known URI.
+
+- MUD receivers SHOULD include their submission resource in any CoRE Link Format descriptions of their resources (both in `/.well-known/core` and in CoRE RD registrations, if applicable).
 
 - MUD receivers MAY indicate failure of MUD-URL submission using a CoAP Error Code.
+  If the submitted MUD URL is encoded in a CBOR Web Token including proof-of-possession claims, MUD receivers MUST return the appropriate error code to initiate the proof of possession flow as described in {{general_pop}}.
 
 ### MUD-URL Resource
 
-<!-- TODO some more text -->
+This section describes considerations for MUD receivers regarding the Receiver-initiated submission flow:
 
-- MUD receivers MUST request MUD-URLs known to them. <!-- duh -->
+- MUD receivers MUST request MUD URLs from any resources known to them.
 
 - MUD receivers MUST re-request MUD-URLs submitted as a CWT claim if the CWT has an expiry time that passed.
 
 ### MUD-URL Payload
 
-<!-- TODO explanatory text -->
+Regarding the actual MUD URL payload transmitted using CoAP, the following considerations apply:
+
 - MUD receivers SHOULD treat devices for which MUD-URL retrieval failed as devices the same way as devices that do not provide a MUD-URL at all.
 
 - MUD receiver implementations MUST support the plain MUD-URL payload, although support for these MAY be disabled by policy.
 
-- MUD receivers SHOULD support the CWT MUD-URL claim.
+- MUD receivers MUST support the CWT MUD-URL claim.
 
-- If the CWT claim is supported, MUD receivers MUST be configured with a policy as to which signers are authorized to sign tokens.
+- MUD receivers SHOULD be configured with a policy as to which signers are authorized to sign tokens.
+
+- MUD receivers SHOULD support proof-of-possession semantics in CBOR Web Tokens and validate them before treating submitted MUD URLs using this format as valid.
 
 <!--
 - Discovery
@@ -428,14 +425,24 @@ For the discovery process described in {{general_discovery}}, the following cons
 -->
 
 # Security Considerations
+(Very WIP for now)
 
-TBD.
+The security considerations from {{!RFC8520}} also apply to this document.
+Regarding CoAP specifics, {{!I-D.irtf-t2trg-amplification-attacks}} provides information on possible attack scenarios.
+Additionally, the following considerations should be taken into account.
 
-TODO: Mention something about signing MUD files and MUD URLs using JOSE and -- in the long run -- COSE.
-(TBD: Is JOSE even relevant for this document?)
 
-- MUD-URL COSE Object Lifetime, Key Type (PKI/RPK), Contained Information (MAC-Address?)
-- Multicast Considerations (DoS prevention)
+For Thing manufacturers that intend to implement this specification:
+- It is recommended to use CBOR Web Token-encoded MUD URLs whereever possible to allow for better integrity checking
+- Using expiry times for CWTs containing MUD URLs can be advantageous, but also has its shortcomings.
+  Most notably, expiry times are not recommended if it is possible for Things to reach a state where they have neither the means to update their CWT nor a non-expired token in their persistent storage
+  As devices may be out of service for longer periods of time, preventing them from refreshing CWTs, this state is unavoidable for the vast majority of devices.
+- In order to use expiry times anyways, manufacturers could use two different CWTs: A backup CWT without an expiry time with a MUD URL pointing to a very restricted MUD file that only allows updating the main CWT, and a main CWT that has an expiry time but has a more broad MUD file referenced in it.
+
+For network operators:
+Network operators SHOULD specify a policy that describes:
+- Whether to accept unauthenticated MUD URLs (those that were not submitted as part of CWTs).
+- The keys whose signatures should be accepted by the MUD receiver if a submission using CWTs is performed.
 
 # IANA Considerations
 
