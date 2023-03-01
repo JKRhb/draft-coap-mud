@@ -146,33 +146,6 @@ Optionally, Things may also provide additional means for proving the
 authenticity of the MUD URL associated with them.
 For this purpose, this document specifies how to use CBOR Web Tokens {{!RFC8392}}
 to include MUD URLs as part of a signed and therefore authenticable token.
-Using this additional feature, the MUD architecture is augmented once more, as
-visualized in {{arch2-fig}}.
-
-TODO: Replace diagram
-
-~~~
-...................................................
-.                                  ____________   .
-.                                 +            +  .
-.             +------------------ |    MUD     |  .
-.   get URL   |                   |  Manager   |  .
-.   (coaps)   |                   +____________+  .
-.  MUD file   |                         .         .
-.             |                         .         .
-.             |     End system network  .         .
-.             |                         .         .
-.           __v____                 _________     .
-.          +       + (DHCP et al.) + router  +    .
-.     +--- | Thing +---->MUD URL+->+   or    |    .
-.     |MUD +_______+               | switch  |    .
-.     |File  |                     +_________+    .
-.     +------+                                    .
-...................................................
-~~~
-{: #arch2-fig title="MUD Discovery using COSE objects." artwork-align="center"}
-
-TODO: Add more architecture stuff here.
 
 # General Considerations
 
