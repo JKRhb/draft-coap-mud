@@ -401,9 +401,9 @@ For the discovery process described in {{general_discovery}}, the following cons
 
 - MUD receivers that support IPv4 SHOULD regularly perform a CoAP request to the "All CoAP Nodes" multicast address for the `/.well-known/mud-url` URI.
 
-- MUD receivers that support IPv6 devices MUST join the "All MUD Receivers" IPv6 multicast address.
+- MUD receivers that support IPv6 devices MUST join the "All MUD Receivers" IPv6 multicast group.
 
-- MUD receivers that support IPv4 devices MUST join the "All CoAP Nodes" IPv4 multicast address.
+- MUD receivers that support IPv4 devices MUST join the "All CoAP Nodes" IPv4 multicast group.
 
 - MUD receivers SHOULD regularly query any CoRE Resource Directories relevant for the subnet they are responsible for.
 
@@ -455,6 +455,11 @@ Regarding the actual MUD URL payload transmitted using CoAP, the following consi
 
 # Security Considerations
 (Very WIP for now)
+
+The security considerations from {{!RFC8520}} also apply to this document.
+Regarding CoAP specifics, {{!draft-irtf-t2trg-amplification-attacks}} provides information on possible attack scenarios.
+Additionally, the following considerations should be taken into account.
+
 
 For Thing manufacturers that intend to implement this specification:
 - It is recommended to use CBOR Web Token-encoded MUD URLs whereever possible to allow for better integrity checking
