@@ -444,12 +444,6 @@ Network operators SHOULD specify a policy that describes:
 - Whether to accept unauthenticated MUD URLs (those that were not submitted as part of CWTs).
 - The keys whose signatures should be accepted by the MUD receiver if a submission using CWTs is performed.
 
-TODO: Mention something about signing MUD files and MUD URLs using JOSE and -- in the long run -- COSE.
-(TBD: Is JOSE even relevant for this document?)
-
-- MUD-URL COSE Object Lifetime, Key Type (PKI/RPK), Contained Information (MAC-Address?)
-- Multicast Considerations (DoS prevention)
-
 # IANA Considerations
 
 - CoAP Resource Media Types Registry
