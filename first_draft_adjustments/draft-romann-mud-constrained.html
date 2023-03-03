@@ -1,0 +1,1920 @@
+<!DOCTYPE html>
+<html lang="en" class="Internet-Draft">
+<head>
+<meta charset="utf-8">
+<meta content="Common,Latin" name="scripts">
+<meta content="initial-scale=1.0" name="viewport">
+<title>Using MUD in Constrained Environments</title>
+<meta content="Jan Romann" name="author">
+<meta content="Hugo Hakim Damer" name="author">
+<meta content="
+       This document specifies additional ways for discovering and emitting
+Manufacturer Usage Descriptions (MUD), especially in constrained environments,
+utilizing the Constrained Application Protocol (CoAP). 
+       TODO: Should be updated. 
+    " name="description">
+<meta content="xml2rfc 3.16.0" name="generator">
+<meta content="Internet-Draft, CoAP, MUD" name="keyword">
+<meta content="draft-romann-mud-constrained-latest" name="ietf.draft">
+<!-- Generator version information:
+  xml2rfc 3.16.0
+    Python 3.10.10
+    appdirs 1.4.4
+    ConfigArgParse 1.5.3
+    google-i18n-address 2.5.2
+    html5lib 1.1
+    intervaltree 3.1.0
+    Jinja2 3.1.2
+    lxml 4.9.2
+    MarkupSafe 2.1.1
+    pycountry 22.3.5
+    PyYAML 6.0
+    requests 2.28.1
+    setuptools 65.6.0
+    six 1.16.0
+    wcwidth 0.2.6
+-->
+<link href="draft-romann-mud-constrained.xml" rel="alternate" type="application/rfc+xml">
+<link href="#copyright" rel="license">
+<style type="text/css">@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-vietnamese.woff2') format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-cyrillic.woff2') format('woff2');
+  unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-vietnamese.woff2') format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-cyrillic.woff2') format('woff2');
+  unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-vietnamese.woff2') format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: local('Lora SemiBold'), local('Lora-SemiBold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-semibold-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Cabin Condensed';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: local('Cabin Condensed SemiBold'), local('CabinCondensed-SemiBold'), url('https://martinthomson.github.io/rfc-css/fonts/cabincondensed-semibold-vietnamese.woff2') format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
+}
+@font-face {
+  font-family: 'Cabin Condensed';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: local('Cabin Condensed SemiBold'), local('CabinCondensed-SemiBold'), url('https://martinthomson.github.io/rfc-css/fonts/cabincondensed-semibold-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Cabin Condensed';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: local('Cabin Condensed SemiBold'), local('CabinCondensed-SemiBold'), url('https://martinthomson.github.io/rfc-css/fonts/cabincondensed-semibold-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Oxygen Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Oxygen Mono'), local('OxygenMono-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/oxygenmono-regular-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Oxygen Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Oxygen Mono'), local('OxygenMono-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/oxygenmono-regular-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+:root {
+  color-scheme: light dark;
+  --background-color: #fff;
+  --text-color: #222;
+  --title-color: #191919;
+  --link-color: #2a6496;
+  --highlight-color: #f9f9f9;
+  --line-color: #eee;
+  --pilcrow-weak: #ddd;
+  --pilcrow-strong: #bbb;
+  --small-font-size: 14.5px;
+  --font-mono: 'Oxygen Mono', monospace;
+  scrollbar-color: #bbb #eee;
+}
+body {
+  max-width: 600px;
+  margin: 75px auto;
+  padding: 0 5px;
+  color: var(--text-color);
+  background-color: var(--background-color);
+  font: 16px/22px "Lora", serif;
+  scroll-behavior: smooth;
+}
+
+.ears {
+  display: none;
+}
+
+/* headings */
+h1, h2, h3, h4, h5, h6 {
+  font-family: "Cabin Condensed", sans-serif;
+  font-weight: 600;
+  margin: 0.8em 0 0.3em;
+  font-size-adjust: 0.5;
+  color: var(--title-color);
+}
+h1#title {
+  font-size: 32px;
+  line-height: 40px;
+  clear: both;
+}
+h1#title, h1#rfcnum {
+  margin: 1.5em 0 0.2em;
+}
+h1#rfcnum + h1#title {
+  margin: 0.2em 0;
+}
+
+h1, h2, h3 {
+  font-size: 22px;
+  line-height: 27px;
+}
+h4, h5, h6 {
+  font-size: 20px;
+  line-height: 24px;
+}
+
+/* general structure */
+.author {
+  padding-bottom: 0.3em;
+}
+#abstract+p {
+  font-size: 18px;
+  line-height: 24px;
+}
+#abstract+p code, #abstract+p samp, #abstract+p tt {
+  font-size: 16px;
+  line-height: 0;
+}
+
+p {
+  padding: 0;
+  margin: 0.5em 0;
+  text-align: left;
+}
+div {
+  margin: 0;
+}
+.alignRight.art-text {
+  background-color: var(--highlight-color);
+  border: 1px solid var(--line-color);
+  border-radius: 3px;
+  padding: 0.5em 1em 0;
+  margin-bottom: 0.5em;
+}
+.alignRight.art-text pre {
+  padding: 0;
+  width: auto;
+}
+.alignRight {
+  margin: 1em 0;
+}
+.alignRight > *:first-child {
+  border: none;
+  margin: 0;
+  float: right;
+  clear: both;
+}
+.alignRight > *:nth-child(2) {
+  clear: both;
+  display: block;
+  border: none;
+}
+svg {
+  display: block;
+}
+/* font-family isn't space-separated, but =~ will have to do */
+svg[font-family~="monospace" i], svg [font-family~="monospace" i] {
+  font-family: var(--font-mono);
+}
+.alignCenter.art-text {
+  background-color: var(--highlight-color);
+  border: 1px solid var(--line-color);
+  border-radius: 3px;
+  padding: 0.5em 1em 0;
+  margin-bottom: 0.5em;
+}
+.alignCenter.art-text pre {
+  padding: 0;
+  width: auto;
+}
+.alignCenter {
+  margin: 1em 0;
+}
+.alignCenter > *:first-child {
+  border: none;
+  /* this isn't optimal, but it's an existence proof.  PrinceXML doesn't
+     support flexbox yet.
+  */
+  display: table;
+  margin: 0 auto;
+}
+
+/* lists */
+ol, ul {
+  padding: 0;
+  margin: 0 0 0.5em 2em;
+}
+:is(ol, ul) :is(ol, ul) {
+  margin-left: 1em;
+}
+li {
+  margin: 0 0 0.25em 0;
+}
+.ulCompact li {
+  margin: 0;
+}
+ul.empty, .ulEmpty {
+  list-style-type: none;
+}
+ul.empty li, .ulEmpty li {
+  margin-top: 0.5em;
+}
+:is(ul, ol).compact, .ulCompact, .olCompact {
+  line-height: 1;
+  margin: 0 0 0 2em;
+}
+
+/* definition lists */
+dl {
+  clear: left;
+  --indent: 3ch;
+  /* --indent: attr(indent ch); not supported in any browser, but we can dream */
+}
+dl.olPercent {
+  --indent: 5ch;
+}
+dl > dt {
+  float: left;
+  margin-right: 2ch;
+  min-width: 8ch;
+}
+dl.dlNewline > dt {
+  float: none;
+}
+dl > dd {
+  margin-bottom: .8em;
+  margin-left: var(--indent) !important; /* stupid element overrides */
+  min-height: 2ex;
+}
+dl.olPercent > dt {
+  min-width: calc(var(--indent) - 2ch);
+}
+:is(dl.compact, .dlCompact) > dd {
+  margin-bottom: 0;
+}
+:is(dl.compact, .dlCompact) > dd > :is(:first-child, .break:first-child + *) {
+  margin-top: 0;
+}
+:is(dl.compact, .dlCompact) > dd > :is(:last-child) {
+  margin-bottom: 0;
+}
+dl > dd > dl {
+  margin-top: 0.5em;
+  margin-bottom: 0;
+}
+:is(dd, span).break {
+  display: none;
+}
+
+/* links */
+a, a[href].selfRef:hover {
+  text-decoration: none;
+}
+a[href] {
+  color: var(--link-color);
+}
+a[href].selfRef, .iref + a[href].internal {
+  color: var(--text-color);
+}
+a[href]:hover {
+  text-decoration: underline;
+}
+a[href].selfRef:hover {
+  background-color: var(--highlight-color);
+}
+a.xref:is(.cite, .auto), :is(#status-of-memo, #copyright) a {
+  white-space: nowrap;
+}
+
+/* Figures */
+tt, code, pre {
+  background-color: var(--highlight-color);
+  font: 14px/22px var(--font-mono);
+}
+tt, code {
+  /* changing the font for inline elements leads to different ascender
+     and descender heights; as we want to retain baseline alignment,
+     remove leading to avoid altering the final height of lines
+     note: this fails if these blocks take an entire line,
+     a different solution would be great */
+  line-height: 0;
+}
+:is(h1, h2, h3, h4, h5, h6) :is(tt, code) {
+  font-size: 84%;
+}
+pre {
+  border: 1px solid var(--line-color);
+  font-size: 13.5px;
+  line-height: 16px;
+  letter-spacing: -0.2px;
+  margin: 5px;
+  padding: 5px;
+}
+img {
+  max-width: 100%;
+}
+figure {
+  margin: 0.5em 0;
+  padding: 0;
+}
+figure blockquote {
+  margin: 0.8em 0.4em 0.4em;
+}
+figcaption, caption {
+  font-style: italic;
+  margin: 0.5em 1.5em;
+  text-align: left;
+}
+@media screen {
+  /* Auto-collapse boilerplate. */
+  :is(#status-of-memo, #copyright) p {
+    margin: -2px 0;
+    max-height: 0;
+    transition: max-height 2s ease, margin 0.5s ease 0.5s;
+    overflow: hidden;
+  }
+  :is(#status-of-memo, #copyright):hover p,
+  :is(#status-of-memo, #copyright) h2:target ~ p {
+    margin: 0.5em 0;
+    max-height: 500px;
+    overflow: auto;
+  }
+  pre, svg {
+    display: inline-block;
+    overflow-x: auto;
+  }
+  pre {
+    max-width: 100%;
+    width: calc(100% - 22px - 1em);
+  }
+  svg {
+    max-width: calc(100% - 22px - 1em);
+  }
+  figure pre {
+    display: block;
+    width: calc(100% - 25px);
+  }
+  :is(pre, svg) + .pilcrow {
+    display: inline-block;
+    vertical-align: text-bottom;
+    padding-bottom: 8px;
+  }
+}
+
+/* aside, blockquote */
+aside, blockquote {
+  margin-left: 0;
+  padding: 0 2em;
+  font-style: italic;
+}
+blockquote {
+  margin: 1em 0;
+}
+cite {
+  display: block;
+  text-align: right;
+  font-style: italic;
+}
+
+/* tables */
+table {
+  max-width: 100%;
+  margin: 0 0 1em;
+  border-collapse: collapse;
+}
+table.right {
+  margin-left: auto;
+}
+table.center {
+  margin-left: auto;
+  margin-right: auto;
+}
+table.left {
+  margin-right: auto;
+}
+thead, tbody {
+  border: 1px solid var(--line-color);
+}
+th, td {
+  text-align: left;
+  vertical-align: top;
+  padding: 5px 10px;
+}
+th {
+  background-color: var(--line-color);
+}
+:is(tr:nth-child(2n), thead+tbody > tr:nth-child(2n+1)) > td {
+  background-color: var(--background-color);
+}
+:is(tr:nth-child(2n+1), thead+tbody > tr:nth-child(2n)) > td {
+  background-color: var(--highlight-color);
+}
+table caption {
+  margin: 0;
+  padding: 3px 0 3px 1em;
+}
+table p {
+  margin: 0;
+}
+
+/* pilcrow */
+a.pilcrow {
+  margin-left: 3px;
+  opacity: 0.2;
+  user-select: none;
+}
+a.pilcrow[href] { color: var(--pilcrow-weak); }
+a.pilcrow[href]:hover { text-decoration: none; }
+@media not print {
+  :hover > a.pilcrow {
+    opacity: 1;
+  }
+  a.pilcrow[href]:hover {
+    color: var(--pilcrow-strong);
+    background-color: transparent;
+  }
+}
+@media print {
+  a.pilcrow {
+    display: none;
+  }
+}
+
+/* misc */
+hr {
+  border: 0;
+  border-top: 1px solid var(--line-color);
+}
+.bcp14 {
+  font-variant: small-caps;
+  font-weight: 600;
+  font-size: var(--small-font-size);
+}
+.role {
+  font-variant: all-small-caps;
+}
+sub, sup {
+  line-height: 1;
+  font-size: 80%;
+}
+
+/* info block */
+#identifiers {
+  margin: 0;
+  font-size: var(--small-font-size);
+  line-height: 18px;
+  --identifier-width: 15ch;
+}
+#identifiers dt {
+  width: var(--identifier-width);
+  min-width: var(--identifier-width);
+  clear: left;
+  float: left;
+  text-align: right;
+}
+#identifiers dd {
+  margin: 0;
+  margin-left: calc(1em + var(--identifier-width)) !important;
+  min-width: 5em;
+}
+#identifiers .authors .author {
+  display: inline-block;
+  margin-right: 1.5em;
+}
+#identifiers .authors .org {
+  font-style: italic;
+}
+
+/* The prepared/rendered info at the very bottom of the page */
+.docInfo {
+  color: #999;
+  font-size: 0.9em;
+  font-style: italic;
+  margin-top: 2em;
+}
+.docInfo .prepared {
+  float: left;
+}
+.docInfo .prepared {
+  float: right;
+}
+
+/* table of contents */
+#toc {
+  padding: 0.75em 0 2em 0;
+  margin-bottom: 1em;
+}
+#toc nav ul {
+  margin: 0 0.5em 0 0;
+  padding: 0;
+  list-style: none;
+}
+#toc nav li {
+  line-height: 1.3em;
+  margin: 0.75em 0;
+  padding-left: 1.2em;
+  text-indent: -1.2em;
+}
+#toc a.xref {
+  white-space: normal;
+}
+/* references */
+.references dt {
+  text-align: right;
+  font-weight: bold;
+  min-width: 7em;
+}
+.references dt:target::before {
+  content: "⇒";
+  width: 15px;
+  margin: 0 10px 0 -25px;
+}
+.references dd {
+  margin-left: 8em !important;
+  overflow: auto;
+}
+
+.refInstance {
+  margin-bottom: 1.25em;
+}
+
+.references .ascii {
+  margin-bottom: 0.25em;
+}
+
+/* index */
+#rfc\.index\.index + ul {
+  margin-left: 0;
+}
+
+/* authors */
+address.vcard {
+  font-style: normal;
+  margin: 1em 0;
+}
+address.vcard .nameRole {
+  font-weight: 700;
+  margin-left: 0;
+}
+address.vcard .label {
+  margin: 0.5em 0;
+}
+address.vcard .type {
+  display: none;
+}
+.alternative-contact {
+  margin: 1.5em 0 1em;
+}
+hr.addr {
+  border-top: 1px dashed;
+  margin: 0;
+  color: #ddd;
+  max-width: calc(100% - 16px);
+}
+@media (min-width: 500px) {
+  #authors-addresses > section {
+    column-count: 2;
+    column-gap: 20px;
+  }
+  #authors-addresses > section > h2 {
+    column-span: all;
+  }
+  /* hack for break-inside: avoid-column */
+  #authors-addresses address {
+    display: inline-block;
+    break-inside: avoid-column;
+  }
+}
+
+.rfcEditorRemove p:first-of-type {
+  font-style: italic;
+}
+.cref {
+  background-color: rgba(249, 232, 105, 0.3);
+  padding: 2px 4px;
+}
+.crefSource {
+  font-style: italic;
+}
+/* alternative layout for smaller screens */
+@media screen and (max-width: 929px) {
+  #toc {
+    position: fixed;
+    z-index: 2;
+    top: 0;
+    right: 0;
+    padding: 0;
+    margin: 0;
+    border-bottom: 1px solid #ccc;
+    opacity: 0.6;
+  }
+  #toc.active {
+      opacity: 1;
+  }
+  #toc h2 {
+    margin: 0;
+    padding: 2px 0 2px 6px;
+    padding-right: 1em;
+    font-size: 18px;
+    line-height: 24px;
+    min-width: 190px;
+    text-align: right;
+    background-color: #444;
+    color: white;
+    cursor: pointer;
+  }
+  #toc h2::before { /* css hamburger */
+    float: right;
+    position: relative;
+    width: 1em;
+    height: 1px;
+    left: -164px;
+    margin: 8px 0 0 0;
+    background: white none repeat scroll 0 0;
+    box-shadow: 0 4px 0 0 white, 0 8px 0 0 white;
+    content: "";
+  }
+  #toc nav {
+    display: none;
+    background-color: var(--background-color);
+    padding: 0.5em 1em 1em;
+    overflow: auto;
+    overscroll-behavior: contain;
+    height: calc(100vh - 48px);
+    border-left: 1px solid #ddd;
+  }
+  #toc.active nav {
+    display: block;
+  }
+  /* Make the collapsed ToC header render white on gray also when it's a link */
+  #toc h2 a,
+  #toc h2 a:link,
+  #toc h2 a:focus,
+  #toc h2 a:hover,
+  #toc a.toplink,
+  #toc a.toplink:hover {
+    color: white;
+    background-color: #444;
+    text-decoration: none;
+  }
+  #toc a.toplink {
+    margin-top: 2px;
+  }
+}
+
+/* alternative layout for wide screens */
+@media screen and (min-width: 930px) {
+  body {
+    padding-right: 360px;
+    padding-right: calc(min(180px + 20%, 500px));
+  }
+  #toc {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    right: calc(50vw - 480px);
+    width: 312px;
+    margin: 0;
+    padding: 0;
+    z-index: 1;
+  }
+  #toc h2 {
+    margin: 0;
+    padding: 0.25em 1em 1em 0;
+  }
+  #toc nav {
+    display: block;
+    height: calc(90vh - 84px);
+    bottom: 0;
+    padding: 0.5em 0 2em;
+    overflow: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+  }
+  #toc nav > ul  {
+    margin-bottom: 2em;
+  }
+  #toc ul {
+    margin: 0 0 0 4px;
+    font-size: var(--small-font-size);
+  }
+  #toc ul :is(p, li) {
+    margin: 2px 0;
+    line-height: 22px;
+  }
+  img { /* future proofing */
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+/* pagination */
+@media print {
+  body {
+    width: 100%;
+  }
+  p {
+    orphans: 3;
+    widows: 3;
+  }
+  #n-copyright-notice {
+    border-bottom: none;
+  }
+  #toc, #n-introduction {
+    page-break-before: always;
+  }
+  #toc {
+    border-top: none;
+    padding-top: 0;
+  }
+  figure, pre {
+    page-break-inside: avoid;
+  }
+  figure {
+    overflow: scroll;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    page-break-after: avoid;
+  }
+  h2+*, h3+*, h4+*, h5+*, h6+* {
+    page-break-before: avoid;
+  }
+  pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-size: 10pt;
+  }
+  table {
+    border: 1px solid #ddd;
+  }
+  td {
+    border-top: 1px solid #ddd;
+  }
+}
+
+@page :first {
+  padding-top: 0;
+  @top-left {
+    content: normal;
+    border: none;
+  }
+  @top-center {
+    content: normal;
+    border: none;
+  }
+  @top-right {
+    content: normal;
+    border: none;
+  }
+}
+
+@page {
+  size: A4;
+  margin-bottom: 45mm;
+  padding-top: 20px;
+}
+
+/* Changes introduced to fix issues found during implementation */
+
+/* Separate body from document info even without intervening H1 */
+section {
+  clear: both;
+}
+
+/* Top align author divs, to avoid names without organization dropping level with org names */
+.author {
+  vertical-align: top;
+}
+
+/* Style section numbers with more space between number and title */
+.section-number {
+  padding-right: 0.5em;
+}
+
+/* Add styling for a link in the ToC that points to the top of the document */
+a.toplink {
+  float: right;
+  margin: 8px 0.5em 0;
+}
+
+/* Provide styling for table cell text alignment */
+table .text-left {
+  text-align: left;
+}
+table .text-center {
+  text-align: center;
+}
+table .text-right {
+  text-align: right;
+}
+
+/* Make the alternative author contact information look less like just another
+   author, and group it closer with the primary author contact information */
+.alternative-contact {
+  margin: 0.5em 0 0.25em 0;
+}
+address .non-ascii {
+  margin: 0 0 0 2em;
+}
+
+/* With it being possible to set tables with alignment
+  left, center, and right, { width: 100%; } does not make sense */
+table {
+  width: auto;
+}
+
+/* Avoid reference text that sits in a block with very wide left margin,
+   because of a long floating dt label.*/
+.references dd {
+  overflow: visible;
+}
+
+/* Control caption placement */
+caption {
+  caption-side: bottom;
+}
+
+/* Limit the width of the author address vcard, so names in right-to-left
+   script don't end up on the other side of the page. */
+
+address.vcard {
+  max-width: 20em;
+  margin-right: auto;
+}
+
+/* For address alignment dependent on LTR or RTL scripts */
+address div.left {
+  text-align: left;
+}
+address div.right {
+  text-align: right;
+}
+
+/* Give the table caption label the same styling as the figcaption */
+
+@media print {
+  .toplink {
+    display: none;
+  }
+
+  /* avoid overwriting the top border line with the ToC header */
+  #toc {
+    padding-top: 1px;
+  }
+
+  /* Avoid page breaks inside dl and author address entries */
+  dd {
+    page-break-before: avoid;
+  }
+  .vcard {
+    page-break-inside: avoid;
+  }
+
+}
+
+/* Dark mode. */
+@media (prefers-color-scheme: dark) {
+:root {
+  --background-color: #121212;
+  --text-color: #f0f0f0;
+  --title-color: #fff;
+  --link-color: #4da4f0;
+  --highlight-color: #282828;
+  --line-color: #444;
+  --pilcrow-weak: #444;
+  --pilcrow-strong: #666;
+  scrollbar-color: #777 #333;
+}
+}
+
+/* SVG Trick: a prefix match works because only black and white are allowed */
+svg :is([stroke="black"], [stroke^="#000"]) {
+  stroke: var(--text-color);
+}
+svg :is([stroke="white"], [stroke^="#fff"]) {
+  stroke: var(--background-color);
+}
+svg :is([fill="black"], [fill^="#000"], :not([fill])) {
+  fill: var(--text-color);
+}
+svg :is([fill="white"], [fill^="#fff"]) {
+  fill: var(--background-color);
+}
+</style>
+
+</head>
+<body class="xml2rfc">
+<table class="ears">
+<thead><tr>
+<td class="left">Internet-Draft</td>
+<td class="center">MUD and CoAP</td>
+<td class="right">March 2023</td>
+</tr></thead>
+<tfoot><tr>
+<td class="left">Romann &amp; Damer</td>
+<td class="center">Expires 2 September 2023</td>
+<td class="right">[Page]</td>
+</tr></tfoot>
+</table>
+<div id="external-metadata" class="document-information"></div>
+<div id="internal-metadata" class="document-information">
+<dl id="identifiers">
+<dt class="label-workgroup">Workgroup:</dt>
+<dd class="workgroup">Network Working Group</dd>
+<dt class="label-internet-draft">Internet-Draft:</dt>
+<dd class="internet-draft">draft-romann-mud-constrained-latest</dd>
+<dt class="label-published">Published:</dt>
+<dd class="published">
+<time datetime="2023-03-01" class="published">1 March 2023</time>
+    </dd>
+<dt class="label-intended-status">Intended Status:</dt>
+<dd class="intended-status">Informational</dd>
+<dt class="label-expires">Expires:</dt>
+<dd class="expires"><time datetime="2023-09-02">2 September 2023</time></dd>
+<dt class="label-authors">Authors:</dt>
+<dd class="authors">
+<div class="author">
+      <div class="author-name">J. Romann, <span class="editor">Ed.</span>
+</div>
+<div class="org">Universität Bremen</div>
+</div>
+<div class="author">
+      <div class="author-name">H. Damer, <span class="editor">Ed.</span>
+</div>
+<div class="org">Universität Bremen</div>
+</div>
+</dd>
+</dl>
+</div>
+<h1 id="title">Using MUD in Constrained Environments</h1>
+<section id="section-abstract">
+      <h2 id="abstract"><a href="#abstract" class="selfRef">Abstract</a></h2>
+<p id="section-abstract-1">This document specifies additional ways for discovering and emitting
+Manufacturer Usage Descriptions (MUD), especially in constrained environments,
+utilizing the Constrained Application Protocol (CoAP).<a href="#section-abstract-1" class="pilcrow">¶</a></p>
+<p id="section-abstract-2">TODO: Should be updated.<a href="#section-abstract-2" class="pilcrow">¶</a></p>
+</section>
+<section class="note rfcEditorRemove" id="section-note.1">
+      <h2 id="name-about-this-document">
+<a href="#name-about-this-document" class="section-name selfRef">About This Document</a>
+      </h2>
+<p id="section-note.1-1">This note is to be removed before publishing as an RFC.<a href="#section-note.1-1" class="pilcrow">¶</a></p>
+<p id="section-note.1-2">
+        Status information for this document may be found at <span><a href="https://datatracker.ietf.org/doc/draft-romann-mud-constrained/">https://datatracker.ietf.org/doc/draft-romann-mud-constrained/</a></span>.<a href="#section-note.1-2" class="pilcrow">¶</a></p>
+<p id="section-note.1-3">Source for this draft and an issue tracker can be found at
+        <span><a href="https://github.com/namib-project/draft-coap-mud">https://github.com/namib-project/draft-coap-mud</a></span>.<a href="#section-note.1-3" class="pilcrow">¶</a></p>
+</section>
+<div id="status-of-memo">
+<section id="section-boilerplate.1">
+        <h2 id="name-status-of-this-memo">
+<a href="#name-status-of-this-memo" class="section-name selfRef">Status of This Memo</a>
+        </h2>
+<p id="section-boilerplate.1-1">
+        This Internet-Draft is submitted in full conformance with the
+        provisions of BCP 78 and BCP 79.<a href="#section-boilerplate.1-1" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.1-2">
+        Internet-Drafts are working documents of the Internet Engineering Task
+        Force (IETF). Note that other groups may also distribute working
+        documents as Internet-Drafts. The list of current Internet-Drafts is
+        at <span><a href="https://datatracker.ietf.org/drafts/current/">https://datatracker.ietf.org/drafts/current/</a></span>.<a href="#section-boilerplate.1-2" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.1-3">
+        Internet-Drafts are draft documents valid for a maximum of six months
+        and may be updated, replaced, or obsoleted by other documents at any
+        time. It is inappropriate to use Internet-Drafts as reference
+        material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.1-4">
+        This Internet-Draft will expire on 2 September 2023.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="copyright">
+<section id="section-boilerplate.2">
+        <h2 id="name-copyright-notice">
+<a href="#name-copyright-notice" class="section-name selfRef">Copyright Notice</a>
+        </h2>
+<p id="section-boilerplate.2-1">
+            Copyright (c) 2023 IETF Trust and the persons identified as the
+            document authors. All rights reserved.<a href="#section-boilerplate.2-1" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.2-2">
+            This document is subject to BCP 78 and the IETF Trust's Legal
+            Provisions Relating to IETF Documents
+            (<span><a href="https://trustee.ietf.org/license-info">https://trustee.ietf.org/license-info</a></span>) in effect on the date of
+            publication of this document. Please review these documents
+            carefully, as they describe your rights and restrictions with
+            respect to this document.<a href="#section-boilerplate.2-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="toc">
+<section id="section-toc.1">
+        <a href="#" onclick="scroll(0,0)" class="toplink">▲</a><h2 id="name-table-of-contents">
+<a href="#name-table-of-contents" class="section-name selfRef">Table of Contents</a>
+        </h2>
+<nav class="toc"><ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1">
+            <p id="section-toc.1-1.1.1" class="keepWithNext"><a href="#section-1" class="auto internal xref">1</a>.  <a href="#name-introduction-and-overview" class="internal xref">Introduction and Overview</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1.2.1">
+                <p id="section-toc.1-1.1.2.1.1" class="keepWithNext"><a href="#section-1.1" class="auto internal xref">1.1</a>.  <a href="#name-terminology" class="internal xref">Terminology</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2">
+            <p id="section-toc.1-1.2.1" class="keepWithNext"><a href="#section-2" class="auto internal xref">2</a>.  <a href="#name-architecture" class="internal xref">Architecture</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3">
+            <p id="section-toc.1-1.3.1"><a href="#section-3" class="auto internal xref">3</a>.  <a href="#name-general-considerations" class="internal xref">General Considerations</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.1">
+                <p id="section-toc.1-1.3.2.1.1"><a href="#section-3.1" class="auto internal xref">3.1</a>.  <a href="#name-mud-url-coap-submission-flo" class="internal xref">MUD-URL CoAP Submission Flows</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.1.2.1">
+                    <p id="section-toc.1-1.3.2.1.2.1.1"><a href="#section-3.1.1" class="auto internal xref">3.1.1</a>.  <a href="#name-using-the-mud-url-resource-" class="internal xref">Using the MUD-URL Resource (Receiver-initiated)</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.1.2.2">
+                    <p id="section-toc.1-1.3.2.1.2.2.1"><a href="#section-3.1.2" class="auto internal xref">3.1.2</a>.  <a href="#name-using-the-mud-url-submissio" class="internal xref">Using the MUD-URL Submission Resource (Thing-initiated)</a></p>
+</li>
+                </ul>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.2">
+                <p id="section-toc.1-1.3.2.2.1"><a href="#section-3.2" class="auto internal xref">3.2</a>.  <a href="#name-mud-coap-payloads" class="internal xref">MUD CoAP Payloads</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.2.2.1">
+                    <p id="section-toc.1-1.3.2.2.2.1.1"><a href="#section-3.2.1" class="auto internal xref">3.2.1</a>.  <a href="#name-plain-url" class="internal xref">Plain URL</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.2.2.2">
+                    <p id="section-toc.1-1.3.2.2.2.2.1"><a href="#section-3.2.2" class="auto internal xref">3.2.2</a>.  <a href="#name-mud-urls-inside-of-cbor-web" class="internal xref">MUD-URLs inside of CBOR Web Tokens</a></p>
+</li>
+                </ul>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.3">
+                <p id="section-toc.1-1.3.2.3.1"><a href="#section-3.3" class="auto internal xref">3.3</a>.  <a href="#name-proof-of-possession-for-cbo" class="internal xref">Proof-of-Possession for CBOR Web Tokens with MUD-URLs</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.3.2.1">
+                    <p id="section-toc.1-1.3.2.3.2.1.1"><a href="#section-3.3.1" class="auto internal xref">3.3.1</a>.  <a href="#name-for-the-thing-initiated-flo" class="internal xref">For the Thing-initiated Flow</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.3.2.2">
+                    <p id="section-toc.1-1.3.2.3.2.2.1"><a href="#section-3.3.2" class="auto internal xref">3.3.2</a>.  <a href="#name-for-the-receiver-initiated-" class="internal xref">For the Receiver-initiated Flow</a></p>
+</li>
+                </ul>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.4">
+                <p id="section-toc.1-1.3.2.4.1"><a href="#section-3.4" class="auto internal xref">3.4</a>.  <a href="#name-resource-discovery" class="internal xref">Resource Discovery</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.4.2.1">
+                    <p id="section-toc.1-1.3.2.4.2.1.1"><a href="#section-3.4.1" class="auto internal xref">3.4.1</a>.  <a href="#name-well-known-uri-and-multicas" class="internal xref">Well-known URI and Multicast Addresses</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.4.2.2">
+                    <p id="section-toc.1-1.3.2.4.2.2.1"><a href="#section-3.4.2" class="auto internal xref">3.4.2</a>.  <a href="#name-core-link-format-and-core-r" class="internal xref">CoRE Link Format and CoRE Resource Directories</a></p>
+</li>
+                </ul>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4">
+            <p id="section-toc.1-1.4.1"><a href="#section-4" class="auto internal xref">4</a>.  <a href="#name-obtaining-a-mud-url-in-cons" class="internal xref">Obtaining a MUD URL in Constrained Environments</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.1">
+                <p id="section-toc.1-1.4.2.1.1"><a href="#section-4.1" class="auto internal xref">4.1</a>.  <a href="#name-thing-behavior" class="internal xref">Thing Behavior</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.1.2.1">
+                    <p id="section-toc.1-1.4.2.1.2.1.1"><a href="#section-4.1.1" class="auto internal xref">4.1.1</a>.  <a href="#name-exposing-mud-urls" class="internal xref">Exposing MUD URLs</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.1.2.2">
+                    <p id="section-toc.1-1.4.2.1.2.2.1"><a href="#section-4.1.2" class="auto internal xref">4.1.2</a>.  <a href="#name-registering-mud-urls-with-m" class="internal xref">Registering MUD URLs with MUD Receivers</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.1.2.3">
+                    <p id="section-toc.1-1.4.2.1.2.3.1"><a href="#section-4.1.3" class="auto internal xref">4.1.3</a>.  <a href="#name-finding-mud-urls-of-other-t" class="internal xref">Finding MUD URLs of Other Things</a></p>
+</li>
+                </ul>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.2">
+                <p id="section-toc.1-1.4.2.2.1"><a href="#section-4.2" class="auto internal xref">4.2</a>.  <a href="#name-receiver-behavior" class="internal xref">Receiver Behavior</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.2.2.1">
+                    <p id="section-toc.1-1.4.2.2.2.1.1"><a href="#section-4.2.1" class="auto internal xref">4.2.1</a>.  <a href="#name-discovery" class="internal xref">Discovery</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.2.2.2">
+                    <p id="section-toc.1-1.4.2.2.2.2.1"><a href="#section-4.2.2" class="auto internal xref">4.2.2</a>.  <a href="#name-mud-url-submission-resource" class="internal xref">MUD-URL Submission Resource</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.2.2.3">
+                    <p id="section-toc.1-1.4.2.2.2.3.1"><a href="#section-4.2.3" class="auto internal xref">4.2.3</a>.  <a href="#name-mud-url-resource" class="internal xref">MUD-URL Resource</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.2.2.4">
+                    <p id="section-toc.1-1.4.2.2.2.4.1"><a href="#section-4.2.4" class="auto internal xref">4.2.4</a>.  <a href="#name-mud-url-payload" class="internal xref">MUD-URL Payload</a></p>
+</li>
+                </ul>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5">
+            <p id="section-toc.1-1.5.1"><a href="#section-5" class="auto internal xref">5</a>.  <a href="#name-security-considerations" class="internal xref">Security Considerations</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6">
+            <p id="section-toc.1-1.6.1"><a href="#section-6" class="auto internal xref">6</a>.  <a href="#name-iana-considerations" class="internal xref">IANA Considerations</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.1">
+                <p id="section-toc.1-1.6.2.1.1"><a href="#section-6.1" class="auto internal xref">6.1</a>.  <a href="#name-well-known-mud-url-uri" class="internal xref">Well-Known 'mud-url' URI</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.2">
+                <p id="section-toc.1-1.6.2.2.1"><a href="#section-6.2" class="auto internal xref">6.2</a>.  <a href="#name-well-known-mud-file-uri" class="internal xref">Well-Known 'mud-file' URI</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.3">
+                <p id="section-toc.1-1.6.2.3.1"><a href="#section-6.3" class="auto internal xref">6.3</a>.  <a href="#name-new-mud-relation-type" class="internal xref">New 'mud' Relation Type</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.4">
+                <p id="section-toc.1-1.6.2.4.1"><a href="#section-6.4" class="auto internal xref">6.4</a>.  <a href="#name-media-types-registry" class="internal xref">Media Types Registry</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.5">
+                <p id="section-toc.1-1.6.2.5.1"><a href="#section-6.5" class="auto internal xref">6.5</a>.  <a href="#name-coap-content-format-registr" class="internal xref">CoAP Content-Format Registry</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7">
+            <p id="section-toc.1-1.7.1"><a href="#section-7" class="auto internal xref">7</a>.  <a href="#name-normative-references" class="internal xref">Normative References</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8">
+            <p id="section-toc.1-1.8.1"><a href="#appendix-A" class="auto internal xref"></a><a href="#name-acknowledgments" class="internal xref">Acknowledgments</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9">
+            <p id="section-toc.1-1.9.1"><a href="#appendix-B" class="auto internal xref"></a><a href="#name-authors-addresses" class="internal xref">Authors' Addresses</a></p>
+</li>
+        </ul>
+</nav>
+</section>
+</div>
+<div id="introduction-and-overview">
+<section id="section-1">
+      <h2 id="name-introduction-and-overview">
+<a href="#section-1" class="section-number selfRef">1. </a><a href="#name-introduction-and-overview" class="section-name selfRef">Introduction and Overview</a>
+      </h2>
+<p id="section-1-1">Manufacturer Usage Descriptions (MUDs), which have been specified in <span>[<a href="#RFC8520" class="cite xref">RFC8520</a>]</span>,
+provide a means for end devices to indicate to the network what sort of access and
+network functionality they require to properly function.
+This information enables automatic configuration of firewall appliances to limit
+device network access to the specified network resources only, which in turn reduces
+the attack surface for MUD-capable devices.<a href="#section-1-1" class="pilcrow">¶</a></p>
+<p id="section-1-2">While <span>[<a href="#RFC8520" class="cite xref">RFC8520</a>]</span> contemplates the use of CoAP-related <span>[<a href="#RFC7252" class="cite xref">RFC7252</a>]</span> policies,
+the MUD URL discovery methods it specifies (DHCP/DHCPv6, LLDP, and X.509
+certificates) are not well-suited for constrained environments (e.g., 802.15.4
+networks using 6LoWPAN and SLAAC).<a href="#section-1-2" class="pilcrow">¶</a></p>
+<p id="section-1-3">Therefore, this document introduces a number of additional ways for distributing
+MUD URLs using CoAP -- such as well-known URIs and parameters for the CoRE Link-Format --
+which are better suited for constrained devices.
+Furthermore, this document specifies a method of encoding MUD URLs in (signed)
+CBOR Web Tokens (CWTs), which allows MUD managers to better validate the
+authenticity of both the URL itself and the associated MUD file.<a href="#section-1-3" class="pilcrow">¶</a></p>
+<p id="section-1-4">The rest of this document is structured as follows: ... TODO<a href="#section-1-4" class="pilcrow">¶</a></p>
+<div id="terminology">
+<section id="section-1.1">
+        <h3 id="name-terminology">
+<a href="#section-1.1" class="section-number selfRef">1.1. </a><a href="#name-terminology" class="section-name selfRef">Terminology</a>
+        </h3>
+<p id="section-1.1-1">The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL
+NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED",
+"MAY", and "OPTIONAL" in this document are to be interpreted as
+described in BCP 14 <span>[<a href="#RFC2119" class="cite xref">RFC2119</a>]</span> <span>[<a href="#RFC8174" class="cite xref">RFC8174</a>]</span> when, and only when, they
+appear in all capitals, as shown here.<a href="#section-1.1-1" class="pilcrow">¶</a></p>
+<p id="section-1.1-2">Building upon the terminology defined in <span>[<a href="#RFC8520" class="cite xref">RFC8520</a>]</span>, this specification introduces the following additional terms:<a href="#section-1.1-2" class="pilcrow">¶</a></p>
+<p id="section-1.1-3">TODO. (Remove if there are no additional terms.)<a href="#section-1.1-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="architecture">
+<section id="section-2">
+      <h2 id="name-architecture">
+<a href="#section-2" class="section-number selfRef">2. </a><a href="#name-architecture" class="section-name selfRef">Architecture</a>
+      </h2>
+<p id="section-2-1">Building upon the MUD architecture specified in <span>[<a href="#RFC8520" class="cite xref">RFC8520</a>]</span>, there are two
+main network components relevant for this document:
+The <em>Thing</em> that wants to obtain network access via a Router or Switch, and the
+<em>MUD Manager</em> that processes MUD URLs, retrieves MUD files from the
+MUD file server, and configures other network components accordingly.
+For the purposes of this document, we extend the MUD architecture with another
+component: The MUD receiver.
+The MUD receiver is the device responsible for providing and/or performing CoAP
+requests to resources intended for MUD URL delivery.
+While this component can also be a part of the same physical device as the MUD
+Manager or the router/switch, this is not required.
+Both the Thing and the MUD receiver can play active roles when
+using CoAP <span>[<a href="#RFC7252" class="cite xref">RFC7252</a>]</span> for exposing and discovering MUD URLs.<a href="#section-2-1" class="pilcrow">¶</a></p>
+<p id="section-2-2">A general overview of the MUD architecture adjusted for using CoAP in a
+constrained environment can be seen in <a href="#arch1-fig" class="auto internal xref">Figure 1</a>.
+Here, we can see that both the Thing and the MUD receiver (as the recipient of
+the MUD URLs) may initiate the MUD discovery process:
+The Thing can contact and register with MUD URL recipients, e.g. by sending a
+CoAP POST request via Multicast, addressing a well-known registration endpoint.
+Conversely, MUD recipients can initiate the discovery process, e.g. by sending a
+COAP GET request to a well-known URI via multicast.<a href="#section-2-2" class="pilcrow">¶</a></p>
+<p id="section-2-3">Note that the protocol used for communication between the MUD Receiver and
+MUD Manager is not specified in this document and implementation-specific.<a href="#section-2-3" class="pilcrow">¶</a></p>
+<p id="section-2-4">TODO: Refine diagram<a href="#section-2-4" class="pilcrow">¶</a></p>
+<span id="name-exposing-and-discovering-mu"></span><div id="arch1-fig">
+<figure id="figure-1">
+        <div class="alignCenter art-text artwork" id="section-2-5.1">
+<pre>
+...................................................
+.         __________ Forward valid ____________   .
+.        +          +  MUD-URLs   +            +  .
+.        |   MUD    +------------&gt;+    MUD     |  .
+.        | Receiver |             |  Manager   |  .
+.        +__________+             +____________+  .
+.             ^                         .         .
+.             |                         .         .
+. Provide MUD |     End system network  .         .
+.  URL (CoAP) |                         .         .
+.           __+____                 _________     .
+.          +       + (DHCP et al.) + router  +    .
+.     +--- | Thing +----&gt;MUD URL+-&gt;+   or    |    .
+.     |MUD +_______+               | switch  |    .
+.     |File  |                     +_________+    .
+.     +------+                                    .
+...................................................
+</pre>
+</div>
+<figcaption><a href="#figure-1" class="selfRef">Figure 1</a>:
+<a href="#name-exposing-and-discovering-mu" class="selfRef">Exposing and discovering MUD URLs via CoAP</a>
+        </figcaption></figure>
+</div>
+<p id="section-2-6">Optionally, Things may also provide additional means for proving the
+authenticity of the MUD URL associated with them.
+For this purpose, this document specifies how to use CBOR Web Tokens <span>[<a href="#RFC8392" class="cite xref">RFC8392</a>]</span>
+to include MUD URLs as part of a signed and therefore authenticable token.<a href="#section-2-6" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="general-considerations">
+<section id="section-3">
+      <h2 id="name-general-considerations">
+<a href="#section-3" class="section-number selfRef">3. </a><a href="#name-general-considerations" class="section-name selfRef">General Considerations</a>
+      </h2>
+<p id="section-3-1">For this document, we focus on two mechanisms for exposing MUD URLs in a
+constrained network:
+On the one hand, Things can expose MUD-URLs as a dedicated CoAP resource.
+This allows them to further secure the payload and provide additional
+authentication, e.g., by embedding the URL in a CBOR Web Token.
+On the other hand, Things can include a MUD URL in a list of links, using, for
+example, the CoRE Link-Format.
+This Web Linking approach also allows Things to submit MUD URLs to a Directory
+Service.<a href="#section-3-1" class="pilcrow">¶</a></p>
+<p id="section-3-2">The first part of this section describes the mechanisms that use a dedicated
+MUD URL CoAP resource.
+In the later parts of this section, discovery methods for this MUD URL resource
+are specified.
+As part of the discovery method description, a method of providing MUD URLs directly
+using the CoRE link format is also described.<a href="#section-3-2" class="pilcrow">¶</a></p>
+<div id="general_submission-flows">
+<section id="section-3.1">
+        <h3 id="name-mud-url-coap-submission-flo">
+<a href="#section-3.1" class="section-number selfRef">3.1. </a><a href="#name-mud-url-coap-submission-flo" class="section-name selfRef">MUD-URL CoAP Submission Flows</a>
+        </h3>
+<p id="section-3.1-1">In general, this specification provides two ways by which a MUD-URL transmission can be performed using an explicit MUD URL resource.<a href="#section-3.1-1" class="pilcrow">¶</a></p>
+<p id="section-3.1-2">In environments where many Things need to be managed over several subnets and where multicast usage is not desirable, it can be advantageous if the MUD receiver provides a CoAP resource to perform submissions to and the Things initiate the MUD-URL submission.
+This will be referred to as the "Thing-initiated" submission flow for the remainder of this specification.<a href="#section-3.1-2" class="pilcrow">¶</a></p>
+<p id="section-3.1-3">Conversely, in environments where multicast is not an issue and things might be limited in their capabilities, it can be advantageous if MUD receivers retrieve the MUD-URL from a CoAP resource provided by the Things.
+In this specification, this will be referred to as the "Receiver-initiated" submission flow.<a href="#section-3.1-3" class="pilcrow">¶</a></p>
+<div id="using-the-mud-url-resource-receiver-initiated">
+<section id="section-3.1.1">
+          <h4 id="name-using-the-mud-url-resource-">
+<a href="#section-3.1.1" class="section-number selfRef">3.1.1. </a><a href="#name-using-the-mud-url-resource-" class="section-name selfRef">Using the MUD-URL Resource (Receiver-initiated)</a>
+          </h4>
+<p id="section-3.1.1-1">In the Receiver-initiated flow, Things provide a CoAP resource discoverable by the means provided in <a href="#general_discovery" class="auto internal xref">Section 3.4</a>, which is then requested by MUD receivers to retrieve the MUD-URL.<a href="#section-3.1.1-1" class="pilcrow">¶</a></p>
+<p id="section-3.1.1-2">In general, the Receiver-initiated MUD-URL flow can be divided into these steps:<a href="#section-3.1.1-2" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-3.1.1-3">
+<li id="section-3.1.1-3.1">After joining the network, the Thing starts providing a CoAP resource to retrieve the MUD-URL.
+This resource should provide the MUD-URL in one of the formats specified in <a href="#general_payloads" class="auto internal xref">Section 3.2</a>.
+It also makes this resource discoverable for MUD receivers using the methods specified in <a href="#general_discovery" class="auto internal xref">Section 3.4</a>.<a href="#section-3.1.1-3.1" class="pilcrow">¶</a>
+</li>
+            <li id="section-3.1.1-3.2">The MUD Receiver discovers the resource using the aforementioned methods.
+Depending on the method of discovery, this could for example happen using a periodic scan for devices, e.g., by periodically requesting a well-known URI using multicast.<a href="#section-3.1.1-3.2" class="pilcrow">¶</a>
+</li>
+            <li id="section-3.1.1-3.3">The MUD Receiver retrieves the discovered resource for devices where the MUD controller does not have an up-to-date MUD URL in memory.
+To do so, it performs a CoAP request for the discovered MUD-URL resource URI using the GET method, which is responded to with the appropriate payload.
+Receivers MUST specify their desired payload format using the Accept option <span><a href="https://rfc-editor.org/rfc/rfc7252#section-5.10.4" class="relref">Section 5.10.4</a> of [<a href="#RFC7252" class="cite xref">RFC7252</a>]</span>.
+During content negotiation, Receivers MUST start with requesting the Content-Format that provides the greatest degree of authenticity protection (i.e., prefer CWTs over plaintext transmission).<a href="#section-3.1.1-3.3" class="pilcrow">¶</a>
+</li>
+          </ol>
+</section>
+</div>
+<div id="using-the-mud-url-submission-resource-thing-initiated">
+<section id="section-3.1.2">
+          <h4 id="name-using-the-mud-url-submissio">
+<a href="#section-3.1.2" class="section-number selfRef">3.1.2. </a><a href="#name-using-the-mud-url-submissio" class="section-name selfRef">Using the MUD-URL Submission Resource (Thing-initiated)</a>
+          </h4>
+<p id="section-3.1.2-1">In the Thing-initiated flow, Things discovery a submission resource provided by the MUD Receiver and submit their MUD-URLs to this resource.<a href="#section-3.1.2-1" class="pilcrow">¶</a></p>
+<p id="section-3.1.2-2">This flow can be divided into these general steps:<a href="#section-3.1.2-2" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-3.1.2-3">
+<li id="section-3.1.2-3.1">The MUD Receiver provides a CoAP resource that Things can submit their MUD-URLs to.
+It also makes itself discoverable for Things using the methods specified in <a href="#general_discovery" class="auto internal xref">Section 3.4</a>.<a href="#section-3.1.2-3.1" class="pilcrow">¶</a>
+</li>
+            <li id="section-3.1.2-3.2">The Thing connects to the network.
+After connecting, it discovers the MUD-URL submission resource using the aforementioned methods.<a href="#section-3.1.2-3.2" class="pilcrow">¶</a>
+</li>
+            <li id="section-3.1.2-3.3">The Thing submits the MUD-URL to the previously discovered URI.
+To do so, it performs a CoAP request to the discovered URI with the POST method.
+The MUD-URL is contained as the message payload in this request using one of the content formats defined in <a href="#general_payloads" class="auto internal xref">Section 3.2</a>.
+Receivers MAY be configured to limit the accepted Content-Formats to ones that provide some level of authenticity for the MUD-URL based on policy.
+However, receiver implementations MUST also support unauthenticated MUD-URL transmissions if no policy forbids it.<a href="#section-3.1.2-3.3" class="pilcrow">¶</a>
+</li>
+          </ol>
+</section>
+</div>
+</section>
+</div>
+<div id="general_payloads">
+<section id="section-3.2">
+        <h3 id="name-mud-coap-payloads">
+<a href="#section-3.2" class="section-number selfRef">3.2. </a><a href="#name-mud-coap-payloads" class="section-name selfRef">MUD CoAP Payloads</a>
+        </h3>
+<p id="section-3.2-1">For the purposes of this specification, we will define two formats for transmitting MUD-URLs, which are suitable for different environments.
+MUD Receivers that conform to this specification MUST support both formats.<a href="#section-3.2-1" class="pilcrow">¶</a></p>
+<div id="plain-url">
+<section id="section-3.2.1">
+          <h4 id="name-plain-url">
+<a href="#section-3.2.1" class="section-number selfRef">3.2.1. </a><a href="#name-plain-url" class="section-name selfRef">Plain URL</a>
+          </h4>
+<p id="section-3.2.1-1">The easiest method of transmitting MUD-URLs is using a plain text payload containing only the MUD-URL.
+While this method has the advantage of simplicity, it does not contain any additional information that could be used by a MUD receiver to authenticate the supplied MUD-URL.<a href="#section-3.2.1-1" class="pilcrow">¶</a></p>
+<p id="section-3.2.1-2">CoAP requests and responses that use this format MUST use the Content-Format option with the value corresponding to the "application/mud-url+plain" media type.<a href="#section-3.2.1-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="mud-urls-inside-of-cbor-web-tokens">
+<section id="section-3.2.2">
+          <h4 id="name-mud-urls-inside-of-cbor-web">
+<a href="#section-3.2.2" class="section-number selfRef">3.2.2. </a><a href="#name-mud-urls-inside-of-cbor-web" class="section-name selfRef">MUD-URLs inside of CBOR Web Tokens</a>
+          </h4>
+<p id="section-3.2.2-1">Previous methods of transmitting MUD-URLs do not allow for authentication of supplied MUD URLs.
+To accomodate for environments where authentication of MUD-URLs is desired, it is also possible to include the MUD-URL as a claim inside of a CBOR Web Token <span>[<a href="#RFC8392" class="cite xref">RFC8392</a>]</span>.
+This allows for MUD receivers or MUD controllers to verify the authenticity of the provided MUD-URL.<a href="#section-3.2.2-1" class="pilcrow">¶</a></p>
+<p id="section-3.2.2-2">CBOR Web Tokens that contain MUD-URL information have the following properties:<a href="#section-3.2.2-2" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-3.2.2-3.1">The MUD-URL is contained as an ASCII-encoded string in the "mud-url" claim.<a href="#section-3.2.2-3.1" class="pilcrow">¶</a>
+</li>
+            <li class="normal" id="section-3.2.2-3.2">The Token MAY contain Proof-of-Possession claims <span>[<a href="#RFC8747" class="cite xref">RFC8747</a>]</span>.
+If it does, the MUD receiver MUST verify that the device is in possession of the key specified in the cnf claim.
+Proof-of-Possession claims that are transmitted over CoAP without DTLS/TLS MUST represent public keys, Receivers MUST treat any symmetric keys sent over insecure channels as invalid/compromised.<a href="#section-3.2.2-3.2" class="pilcrow">¶</a>
+</li>
+            <li class="normal" id="section-3.2.2-3.3">The Token MAY contain an expiry time.
+If an expiry time is specified, the MUD-URL should be resubmitted or requested again shortly before the original CWT expires.
+Note that using an expiry time could cause problems if the device is unable to perform a refresh, e.g., due to a power outage.<a href="#section-3.2.2-3.3" class="pilcrow">¶</a>
+</li>
+          </ul>
+<p id="section-3.2.2-4">CoAP requests and responses that use this format MUST use the Content-Format option with the value corresponding to the "application/mud-url+cwt" media type.<a href="#section-3.2.2-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="general_pop">
+<section id="section-3.3">
+        <h3 id="name-proof-of-possession-for-cbo">
+<a href="#section-3.3" class="section-number selfRef">3.3. </a><a href="#name-proof-of-possession-for-cbo" class="section-name selfRef">Proof-of-Possession for CBOR Web Tokens with MUD-URLs</a>
+        </h3>
+<p id="section-3.3-1">If the MUD-URL is transmitted as a CBOR Web Token that includes Proof-of-Possession claims, the proof-of-possession claim SHOULD be verified.
+To do so, the following procedures SHOULD be used.
+Both of the following procedures use the establishment of a DTLS session using the PoP key in order to prove the possession of the key, similarly to the procedures defined in <span>[<a href="#RFC9202" class="cite xref">RFC9202</a>]</span>.<a href="#section-3.3-1" class="pilcrow">¶</a></p>
+<div id="for-the-thing-initiated-flow">
+<section id="section-3.3.1">
+          <h4 id="name-for-the-thing-initiated-flo">
+<a href="#section-3.3.1" class="section-number selfRef">3.3.1. </a><a href="#name-for-the-thing-initiated-flo" class="section-name selfRef">For the Thing-initiated Flow</a>
+          </h4>
+<ol start="1" type="1" class="normal type-1" id="section-3.3.1-1">
+<li id="section-3.3.1-1.1">After submitting the MUD-URL, the MUD Receiver parses the token.
+If it detects Proof-of-Possession claims, the receiver MUST reply with a 4.01 (Unauthorized) CoAP response code and reject the token for now.
+If the original submission request was not performed using CoAPS, the Receiver MUST also return a set of key information that can be used to establish a CoAP+DTLS session with it, as well as a CoAPS URI indicating the location of the secured submission resource.<a href="#section-3.3.1-1.1" class="pilcrow">¶</a>
+</li>
+            <li id="section-3.3.1-1.2">The Thing then repeats the submission request using its own key information, the Receiver's key information, and the provided URI.<a href="#section-3.3.1-1.2" class="pilcrow">¶</a>
+</li>
+            <li id="section-3.3.1-1.3">During the DTLS handshake, the Receiver MUST require the Thing to use the Proof-of-Possession key included in the originally submitted token in order to successfully establish a DTLS session.<a href="#section-3.3.1-1.3" class="pilcrow">¶</a>
+</li>
+            <li id="section-3.3.1-1.4">After the DTLS handshake, the Thing has proven possession of the key included in the CWT to the MUD Receiver, which can then treat the CWT as valid.<a href="#section-3.3.1-1.4" class="pilcrow">¶</a>
+</li>
+          </ol>
+</section>
+</div>
+<div id="for-the-receiver-initiated-flow">
+<section id="section-3.3.2">
+          <h4 id="name-for-the-receiver-initiated-">
+<a href="#section-3.3.2" class="section-number selfRef">3.3.2. </a><a href="#name-for-the-receiver-initiated-" class="section-name selfRef">For the Receiver-initiated Flow</a>
+          </h4>
+<ol start="1" type="1" class="normal type-1" id="section-3.3.2-1">
+<li id="section-3.3.2-1.1">After receiving the MUD-URL from a request (e.g., a multicast request), the MUD Receiver parses the token.
+If it detects Proof-of-Possession claims, the receiver MUST continue with the following procedure before treating the CWT as valid.<a href="#section-3.3.2-1.1" class="pilcrow">¶</a>
+</li>
+            <li id="section-3.3.2-1.2">The receiver repeats the MUD-URL request, this time using DTLS.
+During the DTLS handshake, the Receiver must require the Thing to use the Proof-of-Possession key included in the originally received token in order to successfully establish the DTLS session.<a href="#section-3.3.2-1.2" class="pilcrow">¶</a>
+</li>
+            <li id="section-3.3.2-1.3">After the DTLS handshake, the Thing has proven possession of the key included in the CWT to the MUD Receiver, which can then treat the CWT as valid.<a href="#section-3.3.2-1.3" class="pilcrow">¶</a>
+</li>
+          </ol>
+</section>
+</div>
+</section>
+</div>
+<div id="general_discovery">
+<section id="section-3.4">
+        <h3 id="name-resource-discovery">
+<a href="#section-3.4" class="section-number selfRef">3.4. </a><a href="#name-resource-discovery" class="section-name selfRef">Resource Discovery</a>
+        </h3>
+<p id="section-3.4-1">In this section, additional methods for resource discovery in constrained environments are defined.<a href="#section-3.4-1" class="pilcrow">¶</a></p>
+<div id="well-known-uri-and-multicast-addresses">
+<section id="section-3.4.1">
+          <h4 id="name-well-known-uri-and-multicas">
+<a href="#section-3.4.1" class="section-number selfRef">3.4.1. </a><a href="#name-well-known-uri-and-multicas" class="section-name selfRef">Well-known URI and Multicast Addresses</a>
+          </h4>
+<p id="section-3.4.1-1">This document introduces a new well-known URI for discovering MUD URLs directly: <code>/.well-known/mud-url</code>.<a href="#section-3.4.1-1" class="pilcrow">¶</a></p>
+<p id="section-3.4.1-2"><code>/.well-known/mud-url</code> MAY be used to expose a URL pointing to a MUD file hosted by an external MUD file server.
+This MUD file MUST describe the device the URL was retrieved from or is referring to within a list of CoRE links.<a href="#section-3.4.1-2" class="pilcrow">¶</a></p>
+<p id="section-3.4.1-3"><span>[<a href="#RFC7252" class="cite xref">RFC7252</a>]</span> registers one IPv4 and one IPv6 address each for the purpose of CoAP multicast.
+In addition to these already existing "All CoAP Nodes" multicast addresses, this document defines an additional "All MUD CoAP Nodes" IPv6 multicast addresses that can be used to address only the subset of CoAP Nodes that support MUD.
+If a device exposes a MUD URL via CoAP, it SHOULD join the respective multicast groups for the IP versions it supports.
+Lastly, this document also defines an additional "All MUD Receivers" IPv6 multicast address that can be used by Things to interact with MUD receivers in their vicinity.<a href="#section-3.4.1-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="core-link-format-and-core-resource-directories">
+<section id="section-3.4.2">
+          <h4 id="name-core-link-format-and-core-r">
+<a href="#section-3.4.2" class="section-number selfRef">3.4.2. </a><a href="#name-core-link-format-and-core-r" class="section-name selfRef">CoRE Link Format and CoRE Resource Directories</a>
+          </h4>
+<p id="section-3.4.2-1">Resources which either host MUD URLs or MUD files MAY be indicated using the CoRE Link Format <span>[<a href="#RFC6690" class="cite xref">RFC6690</a>]</span>.
+For this purpose, additional link parameters are defined:
+With the resource-types <code>mud-file</code> and <code>mud-url</code>, a link MAY be annotated as pointing to a MUD file or a MUD URL, respectively.
+If a MUD URL is included as a resource in a list of CoRE web links, the supported Content-Formats MUST be indicated using the <code>ct</code> parameter.<a href="#section-3.4.2-1" class="pilcrow">¶</a></p>
+<p id="section-3.4.2-2">MUD Receivers or other devices can send a GET requests to a CoAP server for <code>/.well-known/core</code> and get in return a list of hypermedia links to other resources hosted in that server, encoded using the CoRE Link-Format <span>[<a href="#RFC6690" class="cite xref">RFC6690</a>]</span>.
+Among those, it will get the path to the resource exposing the MUD URL, for example <code>/.well-known/mud-url</code> and resource-types like <code>rt=mud-url</code>.<a href="#section-3.4.2-2" class="pilcrow">¶</a></p>
+<p id="section-3.4.2-3">By using CoRE Resource Directories <span>[<a href="#RFC9176" class="cite xref">RFC9176</a>]</span>, devices can register a MUD file or MUD URL and use the directory as a MUD repository, making it discoverable with the usual RD Lookup steps.
+A MUD manager itself MAY also act as a Resource Directory, directly applying the policies from registered MUD files to the network.
+In addition to the registration endpoint defined in <span>[<a href="#RFC9176" class="cite xref">RFC9176</a>]</span>, MUD managers MAY define a separate registration interface when acting as a CoRE RD.<a href="#section-3.4.2-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+</section>
+</div>
+<div id="obtaining-a-mud-url-in-constrained-environments">
+<section id="section-4">
+      <h2 id="name-obtaining-a-mud-url-in-cons">
+<a href="#section-4" class="section-number selfRef">4. </a><a href="#name-obtaining-a-mud-url-in-cons" class="section-name selfRef">Obtaining a MUD URL in Constrained Environments</a>
+      </h2>
+<p id="section-4-1">With the additional mechanisms for finding MUD URLs introduced in this document, MUD managers can be configured to play a more active role in discovering MUD-enabled devices.
+Furthermore, IoT devices could identify their peers based on a MUD URL associated with these devices or perform a configuration process based on the linked MUD file's contents.
+However, the IoT devices themselves also have more options for exposing their MUD URLs more actively, using, for instance, a MUD manager's registration interface.<a href="#section-4-1" class="pilcrow">¶</a></p>
+<p id="section-4-2">In the remainder of this section, we will outline potential use-cases and procedures for obtaining a MUD URL with the additional mechanisms defined above.<a href="#section-4-2" class="pilcrow">¶</a></p>
+<div id="thing-behavior">
+<section id="section-4.1">
+        <h3 id="name-thing-behavior">
+<a href="#section-4.1" class="section-number selfRef">4.1. </a><a href="#name-thing-behavior" class="section-name selfRef">Thing Behavior</a>
+        </h3>
+<div id="exposing-mud-urls">
+<section id="section-4.1.1">
+          <h4 id="name-exposing-mud-urls">
+<a href="#section-4.1.1" class="section-number selfRef">4.1.1. </a><a href="#name-exposing-mud-urls" class="section-name selfRef">Exposing MUD URLs</a>
+          </h4>
+<p id="section-4.1.1-1">Things MAY expose their MUD URL using a dedicated resource hosted under
+<code>/.well-known/mud-url</code>.
+If a MUD URL is exposed this way, the resource MUST offer at least one of the
+specified serialization methods and MUST allow clients to choose between them
+using the Accept option, if provided.
+If the Thing supports resource discovery using a <code>/.well-known/core</code> resource,
+MUD URL resources SHOULD be advertised there using the CoRE Link-Format
+<span>[<a href="#RFC6690" class="cite xref">RFC6690</a>]</span>, indicating the available Content-Formats using the <code>ct</code> parameter.<a href="#section-4.1.1-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="registering-mud-urls-with-mud-receivers">
+<section id="section-4.1.2">
+          <h4 id="name-registering-mud-urls-with-m">
+<a href="#section-4.1.2" class="section-number selfRef">4.1.2. </a><a href="#name-registering-mud-urls-with-m" class="section-name selfRef">Registering MUD URLs with MUD Receivers</a>
+          </h4>
+<p id="section-4.1.2-1">Things MAY actively register their MUD URLs with MUD receivers offering a
+registration interface.
+To perform the registration process, Things can perform a discovery
+process using the CoRE Link Format or directly include their MUD URL as a
+payload of a CoAP POST request.
+If Things are actively registering their MUD URLs with MUD managers, they
+SHOULD regularly repeat the process to keep interested parties informed about
+their presence and their associated MUD URL.<a href="#section-4.1.2-1" class="pilcrow">¶</a></p>
+<p id="section-4.1.2-2">Using the CoRE Link Format, Things MAY send a GET request to the All CoAP Nodes
+(IPv4) or the All MUD Receivers (IPv6) multicast address, requesting the <code>/.well-known/core</code>
+resources and including an (optional) query parameter <code>rt=mud.url-register</code>.
+After filtering the obtained links for the Resource Type <code>mud.url-register</code> to
+identify available submission interfaces, the Thing MAY then send a unicast
+POST request to the discovered MUD manager, containing the MUD URL as a payload
+and a corresponding Content-Format option.
+Alternatively, a Thing MAY also use a CoRE Resource Directory <span>[<a href="#RFC9176" class="cite xref">RFC9176</a>]</span> to
+perform the discovery process.<a href="#section-4.1.2-2" class="pilcrow">¶</a></p>
+<p id="section-4.1.2-3">Things MAY also directly send a POST request containing the MUD URL as
+a payload and a corresponding Content-Format option via unicast or to the All
+CoAP Nodes (IPv4) or the All MUD Receivers (IPv6) multicast address, using the well-known URI
+<code>/.well-known/mud-submission</code>.<a href="#section-4.1.2-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="finding-mud-urls-of-other-things">
+<section id="section-4.1.3">
+          <h4 id="name-finding-mud-urls-of-other-t">
+<a href="#section-4.1.3" class="section-number selfRef">4.1.3. </a><a href="#name-finding-mud-urls-of-other-t" class="section-name selfRef">Finding MUD URLs of Other Things</a>
+          </h4>
+<p id="section-4.1.3-1">If a Thing should be interested in the MUD URLs of one or more of its peers, it
+MAY use the same mechanisms specified for MUD Receivers described in the
+following section.<a href="#section-4.1.3-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="receiver-behavior">
+<section id="section-4.2">
+        <h3 id="name-receiver-behavior">
+<a href="#section-4.2" class="section-number selfRef">4.2. </a><a href="#name-receiver-behavior" class="section-name selfRef">Receiver Behavior</a>
+        </h3>
+<p id="section-4.2-1">MUD receivers are assumed to be mostly non-constrained devices.
+Accordingly, this specification puts most of the implementation burden regarding support for flows and formats on the receivers, while keeping the requirements for Things as small as possible.
+In general, it is recommended that MUD receivers support as much of the specification as possible in order to support as many different Things as possible.<a href="#section-4.2-1" class="pilcrow">¶</a></p>
+<div id="discovery">
+<section id="section-4.2.1">
+          <h4 id="name-discovery">
+<a href="#section-4.2.1" class="section-number selfRef">4.2.1. </a><a href="#name-discovery" class="section-name selfRef">Discovery</a>
+          </h4>
+<p id="section-4.2.1-1">For the discovery process described in <a href="#general_discovery" class="auto internal xref">Section 3.4</a>, the following considerations apply to MUD receivers:<a href="#section-4.2.1-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-4.2.1-2.1">MUD receivers that support IPv6 SHOULD regularly perform a CoAP request to the "All MUD CoAP Nodes" multicast address for the <code>/.well-known/mud-url</code> URI.<a href="#section-4.2.1-2.1" class="pilcrow">¶</a>
+</li>
+            <li class="normal" id="section-4.2.1-2.2">MUD receivers that support IPv4 SHOULD regularly perform a CoAP request to the "All CoAP Nodes" multicast address for the <code>/.well-known/mud-url</code> URI.<a href="#section-4.2.1-2.2" class="pilcrow">¶</a>
+</li>
+            <li class="normal" id="section-4.2.1-2.3">MUD receivers that support IPv6 devices MUST join the "All MUD Receivers" IPv6 multicast group.<a href="#section-4.2.1-2.3" class="pilcrow">¶</a>
+</li>
+            <li class="normal" id="section-4.2.1-2.4">MUD receivers that support IPv4 devices MUST join the "All CoAP Nodes" IPv4 multicast group.<a href="#section-4.2.1-2.4" class="pilcrow">¶</a>
+</li>
+            <li class="normal" id="section-4.2.1-2.5">MUD receivers SHOULD regularly query any CoRE Resource Directories relevant for the subnet they are responsible for.<a href="#section-4.2.1-2.5" class="pilcrow">¶</a>
+</li>
+            <li class="normal" id="section-4.2.1-2.6">MUD receivers SHOULD register their submission resource to any CoRE Resource Directories relevant for the subnet they are responsible for.<a href="#section-4.2.1-2.6" class="pilcrow">¶</a>
+</li>
+          </ul>
+</section>
+</div>
+<div id="mud-url-submission-resource">
+<section id="section-4.2.2">
+          <h4 id="name-mud-url-submission-resource">
+<a href="#section-4.2.2" class="section-number selfRef">4.2.2. </a><a href="#name-mud-url-submission-resource" class="section-name selfRef">MUD-URL Submission Resource</a>
+          </h4>
+<p id="section-4.2.2-1">This section describes the behavior for MUD receivers regarding the Thing-initiated submission flow:<a href="#section-4.2.2-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-4.2.2-2.1">MUD receivers MUST provide a submission resource under the <code>/.well-known/mud-submission</code> well-known URI.<a href="#section-4.2.2-2.1" class="pilcrow">¶</a>
+</li>
+            <li class="normal" id="section-4.2.2-2.2">MUD receivers SHOULD include their submission resource in any CoRE Link Format descriptions of their resources (both in <code>/.well-known/core</code> and in CoRE RD registrations, if applicable).<a href="#section-4.2.2-2.2" class="pilcrow">¶</a>
+</li>
+            <li class="normal" id="section-4.2.2-2.3">MUD receivers MAY indicate failure of MUD-URL submission using a CoAP Error Code.
+If the submitted MUD URL is encoded in a CBOR Web Token including proof-of-possession claims, MUD receivers MUST return the appropriate error code to initiate the proof of possession flow as described in <a href="#general_pop" class="auto internal xref">Section 3.3</a>.<a href="#section-4.2.2-2.3" class="pilcrow">¶</a>
+</li>
+          </ul>
+</section>
+</div>
+<div id="mud-url-resource">
+<section id="section-4.2.3">
+          <h4 id="name-mud-url-resource">
+<a href="#section-4.2.3" class="section-number selfRef">4.2.3. </a><a href="#name-mud-url-resource" class="section-name selfRef">MUD-URL Resource</a>
+          </h4>
+<p id="section-4.2.3-1">This section describes considerations for MUD receivers regarding the Receiver-initiated submission flow:<a href="#section-4.2.3-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-4.2.3-2.1">MUD receivers MUST request MUD URLs from any resources known to them.<a href="#section-4.2.3-2.1" class="pilcrow">¶</a>
+</li>
+            <li class="normal" id="section-4.2.3-2.2">MUD receivers MUST re-request MUD-URLs submitted as a CWT claim if the CWT has an expiry time that passed.<a href="#section-4.2.3-2.2" class="pilcrow">¶</a>
+</li>
+          </ul>
+</section>
+</div>
+<div id="mud-url-payload">
+<section id="section-4.2.4">
+          <h4 id="name-mud-url-payload">
+<a href="#section-4.2.4" class="section-number selfRef">4.2.4. </a><a href="#name-mud-url-payload" class="section-name selfRef">MUD-URL Payload</a>
+          </h4>
+<p id="section-4.2.4-1">Regarding the actual MUD URL payload transmitted using CoAP, the following considerations apply:<a href="#section-4.2.4-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-4.2.4-2.1">MUD receivers SHOULD treat devices for which MUD-URL retrieval failed as devices the same way as devices that do not provide a MUD-URL at all.<a href="#section-4.2.4-2.1" class="pilcrow">¶</a>
+</li>
+            <li class="normal" id="section-4.2.4-2.2">MUD receiver implementations MUST support the plain MUD-URL payload, although support for these MAY be disabled by policy.<a href="#section-4.2.4-2.2" class="pilcrow">¶</a>
+</li>
+            <li class="normal" id="section-4.2.4-2.3">MUD receivers MUST support the CWT MUD-URL claim.<a href="#section-4.2.4-2.3" class="pilcrow">¶</a>
+</li>
+            <li class="normal" id="section-4.2.4-2.4">MUD receivers SHOULD be configured with a policy as to which signers are authorized to sign tokens.<a href="#section-4.2.4-2.4" class="pilcrow">¶</a>
+</li>
+            <li class="normal" id="section-4.2.4-2.5">MUD receivers SHOULD support proof-of-possession semantics in CBOR Web Tokens and validate them before treating submitted MUD URLs using this format as valid.<a href="#section-4.2.4-2.5" class="pilcrow">¶</a>
+</li>
+          </ul>
+</section>
+</div>
+</section>
+</div>
+</section>
+</div>
+<div id="security-considerations">
+<section id="section-5">
+      <h2 id="name-security-considerations">
+<a href="#section-5" class="section-number selfRef">5. </a><a href="#name-security-considerations" class="section-name selfRef">Security Considerations</a>
+      </h2>
+<p id="section-5-1">(Very WIP for now)<a href="#section-5-1" class="pilcrow">¶</a></p>
+<p id="section-5-2">The security considerations from <span>[<a href="#RFC8520" class="cite xref">RFC8520</a>]</span> also apply to this document.
+Regarding CoAP specifics, <span>[<a href="#I-D.irtf-t2trg-amplification-attacks" class="cite xref">I-D.irtf-t2trg-amplification-attacks</a>]</span> provides information on possible attack scenarios.
+Additionally, the following considerations should be taken into account.<a href="#section-5-2" class="pilcrow">¶</a></p>
+<p id="section-5-3">For Thing manufacturers that intend to implement this specification:
+- It is recommended to use CBOR Web Token-encoded MUD URLs whereever possible to allow for better integrity checking
+- Using expiry times for CWTs containing MUD URLs can be advantageous, but also has its shortcomings.
+  Most notably, expiry times are not recommended if it is possible for Things to reach a state where they have neither the means to update their CWT nor a non-expired token in their persistent storage
+  As devices may be out of service for longer periods of time, preventing them from refreshing CWTs, this state is unavoidable for the vast majority of devices.
+- In order to use expiry times anyways, manufacturers could use two different CWTs: A backup CWT without an expiry time with a MUD URL pointing to a very restricted MUD file that only allows updating the main CWT, and a main CWT that has an expiry time but has a more broad MUD file referenced in it.<a href="#section-5-3" class="pilcrow">¶</a></p>
+<p id="section-5-4">For network operators:
+Network operators SHOULD specify a policy that describes:
+- Whether to accept unauthenticated MUD URLs (those that were not submitted as part of CWTs).
+- The keys whose signatures should be accepted by the MUD receiver if a submission using CWTs is performed.<a href="#section-5-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="iana-considerations">
+<section id="section-6">
+      <h2 id="name-iana-considerations">
+<a href="#section-6" class="section-number selfRef">6. </a><a href="#name-iana-considerations" class="section-name selfRef">IANA Considerations</a>
+      </h2>
+<ul class="normal">
+<li class="normal" id="section-6-1.1">CoAP Resource Media Types Registry<a href="#section-6-1.1" class="pilcrow">¶</a>
+</li>
+        <li class="normal" id="section-6-1.2">CoAP Content Format Registry<a href="#section-6-1.2" class="pilcrow">¶</a>
+</li>
+        <li class="normal" id="section-6-1.3">well-known URI Registry<a href="#section-6-1.3" class="pilcrow">¶</a>
+</li>
+        <li class="normal" id="section-6-1.4">IPv6 Multicast Address Registry<a href="#section-6-1.4" class="pilcrow">¶</a>
+</li>
+      </ul>
+<div id="well-known-mud-url-uri">
+<section id="section-6.1">
+        <h3 id="name-well-known-mud-url-uri">
+<a href="#section-6.1" class="section-number selfRef">6.1. </a><a href="#name-well-known-mud-url-uri" class="section-name selfRef">Well-Known 'mud-url' URI</a>
+        </h3>
+</section>
+</div>
+<div id="well-known-mud-file-uri">
+<section id="section-6.2">
+        <h3 id="name-well-known-mud-file-uri">
+<a href="#section-6.2" class="section-number selfRef">6.2. </a><a href="#name-well-known-mud-file-uri" class="section-name selfRef">Well-Known 'mud-file' URI</a>
+        </h3>
+</section>
+</div>
+<div id="new-mud-relation-type">
+<section id="section-6.3">
+        <h3 id="name-new-mud-relation-type">
+<a href="#section-6.3" class="section-number selfRef">6.3. </a><a href="#name-new-mud-relation-type" class="section-name selfRef">New 'mud' Relation Type</a>
+      </h3>
+</section>
+</div>
+<div id="media-types-registry">
+<section id="section-6.4">
+        <h3 id="name-media-types-registry">
+<a href="#section-6.4" class="section-number selfRef">6.4. </a><a href="#name-media-types-registry" class="section-name selfRef">Media Types Registry</a>
+        </h3>
+<ul class="normal">
+<li class="normal" id="section-6.4-1.1">application/mud+cbor?<a href="#section-6.4-1.1" class="pilcrow">¶</a>
+</li>
+        </ul>
+</section>
+</div>
+<div id="coap-content-format-registry">
+<section id="section-6.5">
+        <h3 id="name-coap-content-format-registr">
+<a href="#section-6.5" class="section-number selfRef">6.5. </a><a href="#name-coap-content-format-registr" class="section-name selfRef">CoAP Content-Format Registry</a>
+        </h3>
+<ul class="normal">
+<li class="normal" id="section-6.5-1.1">application/mud+json<a href="#section-6.5-1.1" class="pilcrow">¶</a>
+</li>
+        </ul>
+</section>
+</div>
+</section>
+</div>
+<section id="section-7">
+      <h2 id="name-normative-references">
+<a href="#section-7" class="section-number selfRef">7. </a><a href="#name-normative-references" class="section-name selfRef">Normative References</a>
+      </h2>
+<dl class="references">
+<dt id="I-D.irtf-t2trg-amplification-attacks">[I-D.irtf-t2trg-amplification-attacks]</dt>
+      <dd>
+<span class="refAuthor">Mattsson, J. P.</span>, <span class="refAuthor">Selander, G.</span>, and <span class="refAuthor">C. Amsüss</span>, <span class="refTitle">"Amplification Attacks Using the Constrained Application Protocol (CoAP)"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-irtf-t2trg-amplification-attacks-01</span>, <time datetime="2023-01-17" class="refDate">17 January 2023</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-irtf-t2trg-amplification-attacks-01">https://datatracker.ietf.org/doc/html/draft-irtf-t2trg-amplification-attacks-01</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC2119">[RFC2119]</dt>
+      <dd>
+<span class="refAuthor">Bradner, S.</span>, <span class="refTitle">"Key words for use in RFCs to Indicate Requirement Levels"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 2119</span>, <span class="seriesInfo">DOI 10.17487/RFC2119</span>, <time datetime="1997-03" class="refDate">March 1997</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc2119">https://www.rfc-editor.org/rfc/rfc2119</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC6690">[RFC6690]</dt>
+      <dd>
+<span class="refAuthor">Shelby, Z.</span>, <span class="refTitle">"Constrained RESTful Environments (CoRE) Link Format"</span>, <span class="seriesInfo">RFC 6690</span>, <span class="seriesInfo">DOI 10.17487/RFC6690</span>, <time datetime="2012-08" class="refDate">August 2012</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc6690">https://www.rfc-editor.org/rfc/rfc6690</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC7252">[RFC7252]</dt>
+      <dd>
+<span class="refAuthor">Shelby, Z.</span>, <span class="refAuthor">Hartke, K.</span>, and <span class="refAuthor">C. Bormann</span>, <span class="refTitle">"The Constrained Application Protocol (CoAP)"</span>, <span class="seriesInfo">RFC 7252</span>, <span class="seriesInfo">DOI 10.17487/RFC7252</span>, <time datetime="2014-06" class="refDate">June 2014</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc7252">https://www.rfc-editor.org/rfc/rfc7252</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC8174">[RFC8174]</dt>
+      <dd>
+<span class="refAuthor">Leiba, B.</span>, <span class="refTitle">"Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 8174</span>, <span class="seriesInfo">DOI 10.17487/RFC8174</span>, <time datetime="2017-05" class="refDate">May 2017</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8174">https://www.rfc-editor.org/rfc/rfc8174</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC8392">[RFC8392]</dt>
+      <dd>
+<span class="refAuthor">Jones, M.</span>, <span class="refAuthor">Wahlstroem, E.</span>, <span class="refAuthor">Erdtman, S.</span>, and <span class="refAuthor">H. Tschofenig</span>, <span class="refTitle">"CBOR Web Token (CWT)"</span>, <span class="seriesInfo">RFC 8392</span>, <span class="seriesInfo">DOI 10.17487/RFC8392</span>, <time datetime="2018-05" class="refDate">May 2018</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8392">https://www.rfc-editor.org/rfc/rfc8392</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC8520">[RFC8520]</dt>
+      <dd>
+<span class="refAuthor">Lear, E.</span>, <span class="refAuthor">Droms, R.</span>, and <span class="refAuthor">D. Romascanu</span>, <span class="refTitle">"Manufacturer Usage Description Specification"</span>, <span class="seriesInfo">RFC 8520</span>, <span class="seriesInfo">DOI 10.17487/RFC8520</span>, <time datetime="2019-03" class="refDate">March 2019</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8520">https://www.rfc-editor.org/rfc/rfc8520</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC8747">[RFC8747]</dt>
+      <dd>
+<span class="refAuthor">Jones, M.</span>, <span class="refAuthor">Seitz, L.</span>, <span class="refAuthor">Selander, G.</span>, <span class="refAuthor">Erdtman, S.</span>, and <span class="refAuthor">H. Tschofenig</span>, <span class="refTitle">"Proof-of-Possession Key Semantics for CBOR Web Tokens (CWTs)"</span>, <span class="seriesInfo">RFC 8747</span>, <span class="seriesInfo">DOI 10.17487/RFC8747</span>, <time datetime="2020-03" class="refDate">March 2020</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8747">https://www.rfc-editor.org/rfc/rfc8747</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC9176">[RFC9176]</dt>
+      <dd>
+<span class="refAuthor">Amsüss, C., Ed.</span>, <span class="refAuthor">Shelby, Z.</span>, <span class="refAuthor">Koster, M.</span>, <span class="refAuthor">Bormann, C.</span>, and <span class="refAuthor">P. van der Stok</span>, <span class="refTitle">"Constrained RESTful Environments (CoRE) Resource Directory"</span>, <span class="seriesInfo">RFC 9176</span>, <span class="seriesInfo">DOI 10.17487/RFC9176</span>, <time datetime="2022-04" class="refDate">April 2022</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9176">https://www.rfc-editor.org/rfc/rfc9176</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC9202">[RFC9202]</dt>
+    <dd>
+<span class="refAuthor">Gerdes, S.</span>, <span class="refAuthor">Bergmann, O.</span>, <span class="refAuthor">Bormann, C.</span>, <span class="refAuthor">Selander, G.</span>, and <span class="refAuthor">L. Seitz</span>, <span class="refTitle">"Datagram Transport Layer Security (DTLS) Profile for Authentication and Authorization for Constrained Environments (ACE)"</span>, <span class="seriesInfo">RFC 9202</span>, <span class="seriesInfo">DOI 10.17487/RFC9202</span>, <time datetime="2022-08" class="refDate">August 2022</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9202">https://www.rfc-editor.org/rfc/rfc9202</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+</dl>
+</section>
+<div id="acknowledgments">
+<section id="appendix-A">
+      <h2 id="name-acknowledgments">
+<a href="#name-acknowledgments" class="section-name selfRef">Acknowledgments</a>
+      </h2>
+<p id="appendix-A-1">We would like to thank Jaime Jiménez for allowing us to build upon his draft
+<code>draft-jimenez-t2trg-mud-coap-00</code> for creating an initial version of this
+document.<a href="#appendix-A-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="authors-addresses">
+<section id="appendix-B">
+      <h2 id="name-authors-addresses">
+<a href="#name-authors-addresses" class="section-name selfRef">Authors' Addresses</a>
+      </h2>
+<address class="vcard">
+        <div dir="auto" class="left"><span class="fn nameRole">Jan Romann (<span class="role">editor</span>)</span></div>
+<div dir="auto" class="left"><span class="org">Universität Bremen</span></div>
+<div dir="auto" class="left"><span class="country-name">Germany</span></div>
+<div class="email">
+<span>Email:</span>
+<a href="mailto:jan.romann@uni-bremen.de" class="email">jan.romann@uni-bremen.de</a>
+</div>
+</address>
+<address class="vcard">
+        <div dir="auto" class="left"><span class="fn nameRole">Hugo Hakim Damer (<span class="role">editor</span>)</span></div>
+<div dir="auto" class="left"><span class="org">Universität Bremen</span></div>
+<div dir="auto" class="left"><span class="country-name">Germany</span></div>
+<div class="email">
+<span>Email:</span>
+<a href="mailto:hdamer@uni-bremen.de" class="email">hdamer@uni-bremen.de</a>
+</div>
+</address>
+</section>
+</div>
+<script>const toc = document.getElementById("toc");
+toc.querySelector("h2").addEventListener("click", e => {
+  toc.classList.toggle("active");
+});
+toc.querySelector("nav").addEventListener("click", e => {
+  toc.classList.remove("active");
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,278 @@
+{
+  "magic": "E!vIA5L86J2I",
+  "timestamp": "2022-07-10T00:56:58.605696+00:00",
+  "repo": "namib-project/draft-coap-mud",
+  "labels": [
+    {
+      "name": "bug",
+      "description": "Something isn't working",
+      "color": "d73a4a"
+    },
+    {
+      "name": "documentation",
+      "description": "Improvements or additions to documentation",
+      "color": "0075ca"
+    },
+    {
+      "name": "duplicate",
+      "description": "This issue or pull request already exists",
+      "color": "cfd3d7"
+    },
+    {
+      "name": "enhancement",
+      "description": "New feature or request",
+      "color": "a2eeef"
+    },
+    {
+      "name": "help wanted",
+      "description": "Extra attention is needed",
+      "color": "008672"
+    },
+    {
+      "name": "good first issue",
+      "description": "Good for newcomers",
+      "color": "7057ff"
+    },
+    {
+      "name": "invalid",
+      "description": "This doesn't seem right",
+      "color": "e4e669"
+    },
+    {
+      "name": "question",
+      "description": "Further information is requested",
+      "color": "d876e3"
+    },
+    {
+      "name": "wontfix",
+      "description": "This will not be worked on",
+      "color": "ffffff"
+    }
+  ],
+  "issues": [
+    {
+      "number": 1,
+      "id": "I_kwDOFl88Ys4_PuvD",
+      "title": "Possible additions",
+      "url": "https://github.com/namib-project/draft-coap-mud/issues/1",
+      "state": "OPEN",
+      "author": "JKRhb",
+      "authorAssociation": "MEMBER",
+      "assignees": [],
+      "labels": [],
+      "body": "This issue tracks possible additions to the draft.\r\n\r\n- [ ] #4\r\n- [ ]  Allow for encoding MUD files as CBOR\r\n    - This is probably related to [draft-ietf-core-yang-cbor-17](https://datatracker.ietf.org/doc/html/draft-ietf-core-yang-cbor)\r\n- [ ] #3\r\n- [ ] Allow for other URL schemes? (e. g. `coaps` or `coaps+tcp`)\r\n- [ ] Define CoAP multicast address and well-known URI for registration  with MUD managers \r\n- [ ] Define MUD fields for ~~EAP-NOOB~~EAP-UTE (CC @Janfred)\r\n",
+      "createdAt": "2021-11-23T10:44:51Z",
+      "updatedAt": "2022-07-07T17:45:46Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 3,
+      "id": "I_kwDOFl88Ys5NWzj-",
+      "title": "Clarify the use of the NDP option",
+      "url": "https://github.com/namib-project/draft-coap-mud/issues/3",
+      "state": "OPEN",
+      "author": "JKRhb",
+      "authorAssociation": "MEMBER",
+      "assignees": [],
+      "labels": [],
+      "body": "It should be discussed where the NDP option is supposed to be included. Should it only be sent in Router Solicitations? Or could it be used in other message types as well:\r\n\r\n- Neighbor Solicitation (type 135)\r\n- Neighbor Advertisement (type 136)\r\n- Redirect (type 137)\r\n\r\nMy current impression is that these message types are not suitable for MUD URLs, but I might be wrong here.",
+      "createdAt": "2022-07-07T17:33:55Z",
+      "updatedAt": "2022-07-07T17:36:02Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 4,
+      "id": "I_kwDOFl88Ys5NW3T0",
+      "title": "New link relation type for external MUD URLs?",
+      "url": "https://github.com/namib-project/draft-coap-mud/issues/4",
+      "state": "OPEN",
+      "author": "JKRhb",
+      "authorAssociation": "MEMBER",
+      "assignees": [
+        "JKRhb",
+        "pulsastrix"
+      ],
+      "labels": [],
+      "body": "It could be useful to have a dedicated link relation type for MUD URLs. This way, MUD URLs pointing to a MUD fileserver could be linked like so: `<https://www.example.com/mudfile>;rel=\"mud\";rt=\"mud\";anchor=\"/\"`. In this example, an anchor parameter with a value of `\"/\"` is used to indicate that the root resource (and therefore the device as a whole) is described by the MUD file the link is pointing to. Maybe the relation type `describes` could also be used instead.",
+      "createdAt": "2022-07-07T17:45:33Z",
+      "updatedAt": "2022-07-07T17:46:04Z",
+      "closedAt": null,
+      "comments": []
+    }
+  ],
+  "pulls": [
+    {
+      "number": 2,
+      "id": "PR_kwDOFl88Ys4u5mQD",
+      "title": "Add proposal for MUD NDP option",
+      "url": "https://github.com/namib-project/draft-coap-mud/pull/2",
+      "state": "MERGED",
+      "author": "JKRhb",
+      "authorAssociation": "MEMBER",
+      "assignees": [],
+      "labels": [],
+      "body": "This PR contains a proposal for a MUD NDP option that could be included in Router Solicitations (and other message types).",
+      "createdAt": "2021-11-23T10:50:21Z",
+      "updatedAt": "2022-07-07T17:45:11Z",
+      "baseRepository": "namib-project/draft-coap-mud",
+      "baseRefName": "master",
+      "baseRefOid": "b89f91b160a91703d6d42482f01a0efe5c28f299",
+      "headRepository": "namib-project/draft-coap-mud",
+      "headRefName": "ndp-option",
+      "headRefOid": "77e6091ea8f7118d1f79b1a2a89208c8c3f51e9e",
+      "closedAt": "2022-07-07T17:45:09Z",
+      "mergedAt": "2022-07-07T17:45:09Z",
+      "mergedBy": "JKRhb",
+      "mergeCommit": {
+        "oid": "ce24aaae85de59eaad12755dc29738bc618d46f7"
+      },
+      "comments": [
+        {
+          "author": "JKRhb",
+          "authorAssociation": "MEMBER",
+          "body": "I think the option should now be fine to be used in Router Solicitations. I am not sure if we should address other message types as well and if there is a special need for addressing NDP on 6LoWPAN.",
+          "createdAt": "2021-11-24T16:49:35Z",
+          "updatedAt": "2021-11-24T16:49:35Z"
+        },
+        {
+          "author": "JKRhb",
+          "authorAssociation": "MEMBER",
+          "body": "Made a small addition and included points for further discussion in #3. I will merge this PR now, we can discuss more details in #3 and in follow-up PRs :)",
+          "createdAt": "2022-07-07T17:45:04Z",
+          "updatedAt": "2022-07-07T17:45:04Z"
+        }
+      ],
+      "reviews": [
+        {
+          "id": "PRR_kwDOFl88Ys4wghhx",
+          "commit": {
+            "abbreviatedOid": "440e1e0"
+          },
+          "author": "falko17",
+          "authorAssociation": "MEMBER",
+          "state": "CHANGES_REQUESTED",
+          "body": "I've left two small suggestions.",
+          "createdAt": "2021-11-23T15:34:41Z",
+          "updatedAt": "2021-11-23T15:55:27Z",
+          "comments": [
+            {
+              "originalPosition": 6,
+              "body": "I'm unsure whether it's proper etiquette to link to other RFCs everywhere, but since SLAAC has a corresponding RFC ([RFC 4862](https://datatracker.ietf.org/doc/html/rfc4862)), it could be linked here.\r\n```suggestion\r\nUsing NDP {{!RFC4861}} and Stateless Address Autoconfiguration (SLAAC) {{!RFC4862}}, nodes can configure global addresses on their own based on prefixes contained in NDP Router Advertisements (RAs).\r\n```",
+              "createdAt": "2021-11-23T15:34:41Z",
+              "updatedAt": "2021-11-23T15:55:27Z"
+            },
+            {
+              "originalPosition": 7,
+              "body": "```suggestion\r\nTherefore, DHCPv6 is typically not necessary for IPv6 hosts, which is a problem for the distribution of MUD URLs for these kinds of devices.\r\n```\r\nSmall grammatical suggestion.",
+              "createdAt": "2021-11-23T15:48:33Z",
+              "updatedAt": "2021-11-23T15:55:27Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOFl88Ys4wgxHK",
+          "commit": {
+            "abbreviatedOid": "19f957f"
+          },
+          "author": "JKRhb",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2021-11-23T16:16:58Z",
+          "updatedAt": "2021-11-23T16:16:58Z",
+          "comments": [
+            {
+              "originalPosition": 6,
+              "body": "Thank you! I incorporated your suggestions :)",
+              "createdAt": "2021-11-23T16:16:58Z",
+              "updatedAt": "2021-11-23T16:16:58Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOFl88Ys4whRYD",
+          "commit": {
+            "abbreviatedOid": "19f957f"
+          },
+          "author": "falko17",
+          "authorAssociation": "MEMBER",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2021-11-23T18:16:46Z",
+          "updatedAt": "2021-11-23T18:16:46Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOFl88Ys4wkc9X",
+          "commit": {
+            "abbreviatedOid": "19f957f"
+          },
+          "author": "JKRhb",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2021-11-24T12:54:46Z",
+          "updatedAt": "2021-11-24T12:54:46Z",
+          "comments": [
+            {
+              "originalPosition": 20,
+              "body": "I just noticed that the option format is a bit off. Both type and length should have a length of 8-bit (cf. for example the CoRE RD [Resource Directory Address Option (RDAO)](https://datatracker.ietf.org/doc/html/draft-ietf-core-resource-directory#section-4.1.1) for NDP). I will provide a fix for that soon.",
+              "createdAt": "2021-11-24T12:54:46Z",
+              "updatedAt": "2021-11-24T12:59:42Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOFl88Ys4wlmvS",
+          "commit": {
+            "abbreviatedOid": "78fec02"
+          },
+          "author": "JKRhb",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2021-11-24T16:47:30Z",
+          "updatedAt": "2021-11-24T16:47:31Z",
+          "comments": [
+            {
+              "originalPosition": 20,
+              "body": "Fixed :)",
+              "createdAt": "2021-11-24T16:47:30Z",
+              "updatedAt": "2021-11-24T16:47:31Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 5,
+      "id": "PR_kwDOFl88Ys47C-rN",
+      "title": "chore: set up CI pipeline",
+      "url": "https://github.com/namib-project/draft-coap-mud/pull/5",
+      "state": "MERGED",
+      "author": "JKRhb",
+      "authorAssociation": "MEMBER",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2022-07-07T18:17:03Z",
+      "updatedAt": "2022-07-07T18:45:16Z",
+      "baseRepository": "namib-project/draft-coap-mud",
+      "baseRefName": "master",
+      "baseRefOid": "ce24aaae85de59eaad12755dc29738bc618d46f7",
+      "headRepository": "namib-project/draft-coap-mud",
+      "headRefName": "ci-pipeline",
+      "headRefOid": "dc2cfbe387d0d617b2143025f5ee8c1e609379c9",
+      "closedAt": "2022-07-07T18:45:12Z",
+      "mergedAt": "2022-07-07T18:45:12Z",
+      "mergedBy": "JKRhb",
+      "mergeCommit": {
+        "oid": "08d673cc5c67eba9da44c0665337351d8277b903"
+      },
+      "comments": [],
+      "reviews": []
+    }
+  ]
+}
