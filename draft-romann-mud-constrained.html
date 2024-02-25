@@ -10,29 +10,27 @@
 <meta content="
        This document specifies additional ways for discovering and emitting
 Manufacturer Usage Descriptions (MUD), especially in constrained environments,
-utilizing the Constrained Application Protocol (CoAP). 
-       TODO: Should be updated. 
+utilizing the Constrained Application Protocol (CoAP), CoRE Resource Discovery,
+and CBOR Web Tokens. 
     " name="description">
-<meta content="xml2rfc 3.16.0" name="generator">
+<meta content="xml2rfc 3.19.4" name="generator">
 <meta content="Internet-Draft, CoAP, MUD" name="keyword">
 <meta content="draft-romann-mud-constrained-latest" name="ietf.draft">
 <!-- Generator version information:
-  xml2rfc 3.16.0
-    Python 3.10.10
-    appdirs 1.4.4
-    ConfigArgParse 1.5.3
-    google-i18n-address 2.5.2
-    html5lib 1.1
+  xml2rfc 3.19.4
+    Python 3.11.6
+    ConfigArgParse 1.7
+    google-i18n-address 3.1.0
     intervaltree 3.1.0
     Jinja2 3.1.2
-    lxml 4.9.2
-    MarkupSafe 2.1.1
+    lxml 4.9.3
+    platformdirs 4.2.0
     pycountry 22.3.5
-    PyYAML 6.0
-    requests 2.28.1
-    setuptools 65.6.0
+    PyYAML 6.0.1
+    requests 2.31.0
+    setuptools 68.2.2
     six 1.16.0
-    wcwidth 0.2.6
+    wcwidth 0.2.13
 -->
 <link href="draft-romann-mud-constrained.xml" rel="alternate" type="application/rfc+xml">
 <link href="#copyright" rel="license">
@@ -614,6 +612,7 @@ sub, sup {
   clear: left;
   float: left;
   text-align: right;
+  margin-right: 1ch;
 }
 #identifiers dd {
   margin: 0;
@@ -654,7 +653,7 @@ sub, sup {
 }
 #toc nav li {
   line-height: 1.3em;
-  margin: 0.75em 0;
+  margin: 2px 0;
   padding-left: 1.2em;
   text-indent: -1.2em;
 }
@@ -665,7 +664,8 @@ sub, sup {
 .references dt {
   text-align: right;
   font-weight: bold;
-  min-width: 7em;
+  min-width: 10ch;
+  margin-right: 1.5ch;
 }
 .references dt:target::before {
   content: "⇒";
@@ -673,7 +673,7 @@ sub, sup {
   margin: 0 10px 0 -25px;
 }
 .references dd {
-  margin-left: 8em !important;
+  margin-left: 12ch !important;
   overflow: auto;
 }
 
@@ -746,7 +746,7 @@ hr.addr {
     z-index: 2;
     top: 0;
     right: 0;
-    padding: 0;
+    padding: 1px 0 0 0;
     margin: 0;
     border-bottom: 1px solid #ccc;
     opacity: 0.6;
@@ -870,16 +870,13 @@ hr.addr {
     border-top: none;
     padding-top: 0;
   }
-  figure, pre {
+  figure, pre, .vcard {
     page-break-inside: avoid;
-  }
-  figure {
-    overflow: scroll;
   }
   h1, h2, h3, h4, h5, h6 {
     page-break-after: avoid;
   }
-  h2+*, h3+*, h4+*, h5+*, h6+* {
+  :is(h2, h3, h4, h5, h6)+*, dd {
     page-break-before: avoid;
   }
   pre {
@@ -892,6 +889,9 @@ hr.addr {
   }
   td {
     border-top: 1px solid #ddd;
+  }
+  .toplink {
+    display: none;
   }
 }
 
@@ -993,28 +993,6 @@ address div.right {
   text-align: right;
 }
 
-/* Give the table caption label the same styling as the figcaption */
-
-@media print {
-  .toplink {
-    display: none;
-  }
-
-  /* avoid overwriting the top border line with the ToC header */
-  #toc {
-    padding-top: 1px;
-  }
-
-  /* Avoid page breaks inside dl and author address entries */
-  dd {
-    page-break-before: avoid;
-  }
-  .vcard {
-    page-break-inside: avoid;
-  }
-
-}
-
 /* Dark mode. */
 @media (prefers-color-scheme: dark) {
 :root {
@@ -1051,11 +1029,11 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <thead><tr>
 <td class="left">Internet-Draft</td>
 <td class="center">MUD and CoAP</td>
-<td class="right">March 2023</td>
+<td class="right">February 2024</td>
 </tr></thead>
 <tfoot><tr>
 <td class="left">Romann &amp; Damer</td>
-<td class="center">Expires 4 September 2023</td>
+<td class="center">Expires 28 August 2024</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1068,12 +1046,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-romann-mud-constrained-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2023-03-03" class="published">3 March 2023</time>
+<time datetime="2024-02-25" class="published">25 February 2024</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Informational</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2023-09-04">4 September 2023</time></dd>
+<dd class="expires"><time datetime="2024-08-28">28 August 2024</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1094,8 +1072,8 @@ svg :is([fill="white"], [fill^="#fff"]) {
       <h2 id="abstract"><a href="#abstract" class="selfRef">Abstract</a></h2>
 <p id="section-abstract-1">This document specifies additional ways for discovering and emitting
 Manufacturer Usage Descriptions (MUD), especially in constrained environments,
-utilizing the Constrained Application Protocol (CoAP).<a href="#section-abstract-1" class="pilcrow">¶</a></p>
-<p id="section-abstract-2">TODO: Should be updated.<a href="#section-abstract-2" class="pilcrow">¶</a></p>
+utilizing the Constrained Application Protocol (CoAP), CoRE Resource Discovery,
+and CBOR Web Tokens.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
 </section>
 <section class="note rfcEditorRemove" id="section-note.1">
       <h2 id="name-about-this-document">
@@ -1126,7 +1104,7 @@ utilizing the Constrained Application Protocol (CoAP).<a href="#section-abstract
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 4 September 2023.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 28 August 2024.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1135,7 +1113,7 @@ utilizing the Constrained Application Protocol (CoAP).<a href="#section-abstract
 <a href="#name-copyright-notice" class="section-name selfRef">Copyright Notice</a>
         </h2>
 <p id="section-boilerplate.2-1">
-            Copyright (c) 2023 IETF Trust and the persons identified as the
+            Copyright (c) 2024 IETF Trust and the persons identified as the
             document authors. All rights reserved.<a href="#section-boilerplate.2-1" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.2-2">
             This document is subject to BCP 78 and the IETF Trust's Legal
@@ -1308,7 +1286,6 @@ which are better suited for constrained devices.
 Furthermore, this document specifies a method of encoding MUD URLs in (signed)
 CBOR Web Tokens (CWTs) <span>[<a href="#RFC8392" class="cite xref">RFC8392</a>]</span>, which allows MUD managers to better validate the
 authenticity of both the URL itself and the associated MUD file.<a href="#section-1-3" class="pilcrow">¶</a></p>
-<p id="section-1-4">The rest of this document is structured as follows: ... TODO<a href="#section-1-4" class="pilcrow">¶</a></p>
 <div id="terminology">
 <section id="section-1.1">
         <h3 id="name-terminology">
@@ -1319,8 +1296,7 @@ NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED",
 "MAY", and "OPTIONAL" in this document are to be interpreted as
 described in BCP 14 <span>[<a href="#RFC2119" class="cite xref">RFC2119</a>]</span> <span>[<a href="#RFC8174" class="cite xref">RFC8174</a>]</span> when, and only when, they
 appear in all capitals, as shown here.<a href="#section-1.1-1" class="pilcrow">¶</a></p>
-<p id="section-1.1-2">Building upon the terminology defined in <span>[<a href="#RFC8520" class="cite xref">RFC8520</a>]</span>, this specification introduces the following additional terms:<a href="#section-1.1-2" class="pilcrow">¶</a></p>
-<p id="section-1.1-3">TODO. (Remove if there are no additional terms.)<a href="#section-1.1-3" class="pilcrow">¶</a></p>
+<p id="section-1.1-2">This specification re-uses the terminology defined in <span>[<a href="#RFC8520" class="cite xref">RFC8520</a>]</span>.<a href="#section-1.1-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -1353,10 +1329,9 @@ Conversely, MUD recipients can initiate the discovery process, e.g. by sending a
 COAP GET request to a well-known URI via multicast.<a href="#section-2-2" class="pilcrow">¶</a></p>
 <p id="section-2-3">Note that the protocol used for communication between the MUD Receiver and
 MUD Manager is not specified in this document and implementation-specific.<a href="#section-2-3" class="pilcrow">¶</a></p>
-<p id="section-2-4">TODO: Refine diagram<a href="#section-2-4" class="pilcrow">¶</a></p>
 <span id="name-exposing-and-discovering-mu"></span><div id="arch1-fig">
 <figure id="figure-1">
-        <div class="alignCenter art-text artwork" id="section-2-5.1">
+        <div class="alignCenter art-text artwork" id="section-2-4.1">
 <pre>
 ...................................................
 .         __________ Forward valid ____________   .
@@ -1381,10 +1356,10 @@ MUD Manager is not specified in this document and implementation-specific.<a hre
 <a href="#name-exposing-and-discovering-mu" class="selfRef">Exposing and discovering MUD URLs via CoAP</a>
         </figcaption></figure>
 </div>
-<p id="section-2-6">Optionally, Things may also provide additional means for proving the
+<p id="section-2-5">Optionally, Things may also provide additional means for proving the
 authenticity of the MUD URL associated with them.
 For this purpose, this document specifies how to use CBOR Web Tokens <span>[<a href="#RFC8392" class="cite xref">RFC8392</a>]</span>
-to include MUD URLs as part of a signed and therefore authenticable token.<a href="#section-2-6" class="pilcrow">¶</a></p>
+to include MUD URLs as part of a signed and therefore authenticable token.<a href="#section-2-5" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="general-considerations">
@@ -1425,17 +1400,20 @@ In this specification, this will be referred to as the "Receiver-initiated" subm
 <p id="section-3.1.1-1">In the Receiver-initiated flow, Things provide a CoAP resource discoverable by the means provided in <a href="#general_discovery" class="auto internal xref">Section 3.4</a>, which is then requested by MUD Receivers to retrieve the MUD URL.<a href="#section-3.1.1-1" class="pilcrow">¶</a></p>
 <p id="section-3.1.1-2">In general, the Receiver-initiated MUD URL flow can be divided into these steps:<a href="#section-3.1.1-2" class="pilcrow">¶</a></p>
 <ol start="1" type="1" class="normal type-1" id="section-3.1.1-3">
-<li id="section-3.1.1-3.1">After joining the network, the Thing starts providing a CoAP resource to retrieve the MUD URL.
+<li id="section-3.1.1-3.1">
+              <p id="section-3.1.1-3.1.1">After joining the network, the Thing starts providing a CoAP resource to retrieve the MUD URL.
 This resource should provide the MUD URL in one of the formats specified in <a href="#general_payloads" class="auto internal xref">Section 3.2</a>.
-It also makes this resource discoverable for MUD Receivers using the methods specified in <a href="#general_discovery" class="auto internal xref">Section 3.4</a>.<a href="#section-3.1.1-3.1" class="pilcrow">¶</a>
+It also makes this resource discoverable for MUD Receivers using the methods specified in <a href="#general_discovery" class="auto internal xref">Section 3.4</a>.<a href="#section-3.1.1-3.1.1" class="pilcrow">¶</a></p>
 </li>
-            <li id="section-3.1.1-3.2">The MUD Receiver discovers the resource using the aforementioned methods.
-Depending on the method of discovery, this could for example happen using a periodic scan for devices, e.g., by periodically requesting a well-known URI using multicast.<a href="#section-3.1.1-3.2" class="pilcrow">¶</a>
+            <li id="section-3.1.1-3.2">
+              <p id="section-3.1.1-3.2.1">The MUD Receiver discovers the resource using the aforementioned methods.
+Depending on the method of discovery, this could for example happen using a periodic scan for devices, e.g., by periodically requesting a well-known URI using multicast.<a href="#section-3.1.1-3.2.1" class="pilcrow">¶</a></p>
 </li>
-            <li id="section-3.1.1-3.3">The MUD Receiver retrieves the discovered resource for devices for which the MUD Controller does not have a current MUD URL.
+            <li id="section-3.1.1-3.3">
+              <p id="section-3.1.1-3.3.1">The MUD Receiver retrieves the discovered resource for devices for which the MUD Controller does not have a current MUD URL.
 To do so, it performs a CoAP request for the discovered MUD URL resource URI using the GET method, which is responded to with the appropriate payload.
 Receivers MUST specify their desired payload format using the Accept option <span><a href="https://rfc-editor.org/rfc/rfc7252#section-5.10.4" class="relref">Section 5.10.4</a> of [<a href="#RFC7252" class="cite xref">RFC7252</a>]</span>.
-During content negotiation, Receivers MUST start with requesting the Content-Format that provides the greatest degree of authenticity protection (i.e., prefer CWTs over plaintext transmission).<a href="#section-3.1.1-3.3" class="pilcrow">¶</a>
+During content negotiation, Receivers MUST start with requesting the Content-Format that provides the greatest degree of authenticity protection (i.e., prefer CWTs over plaintext transmission).<a href="#section-3.1.1-3.3.1" class="pilcrow">¶</a></p>
 </li>
           </ol>
 </section>
@@ -1448,17 +1426,20 @@ During content negotiation, Receivers MUST start with requesting the Content-For
 <p id="section-3.1.2-1">In the Thing-initiated flow, Things discovery a submission resource provided by the MUD Receiver and submit their MUD URLs to this resource.<a href="#section-3.1.2-1" class="pilcrow">¶</a></p>
 <p id="section-3.1.2-2">This flow can be divided into these general steps:<a href="#section-3.1.2-2" class="pilcrow">¶</a></p>
 <ol start="1" type="1" class="normal type-1" id="section-3.1.2-3">
-<li id="section-3.1.2-3.1">The MUD Receiver provides a CoAP resource that Things can submit their MUD URLs to.
-It also makes itself discoverable for Things using the methods specified in <a href="#general_discovery" class="auto internal xref">Section 3.4</a>.<a href="#section-3.1.2-3.1" class="pilcrow">¶</a>
+<li id="section-3.1.2-3.1">
+              <p id="section-3.1.2-3.1.1">The MUD Receiver provides a CoAP resource that Things can submit their MUD URLs to.
+It also makes itself discoverable for Things using the methods specified in <a href="#general_discovery" class="auto internal xref">Section 3.4</a>.<a href="#section-3.1.2-3.1.1" class="pilcrow">¶</a></p>
 </li>
-            <li id="section-3.1.2-3.2">The Thing connects to the network.
-After connecting, it discovers the MUD URL submission resource using the aforementioned methods.<a href="#section-3.1.2-3.2" class="pilcrow">¶</a>
+            <li id="section-3.1.2-3.2">
+              <p id="section-3.1.2-3.2.1">The Thing connects to the network.
+After connecting, it discovers the MUD URL submission resource using the aforementioned methods.<a href="#section-3.1.2-3.2.1" class="pilcrow">¶</a></p>
 </li>
-            <li id="section-3.1.2-3.3">The Thing submits the MUD URL to the previously discovered URI.
+            <li id="section-3.1.2-3.3">
+              <p id="section-3.1.2-3.3.1">The Thing submits the MUD URL to the previously discovered URI.
 To do so, it performs a CoAP request to the discovered URI with the POST method.
 The MUD URL is contained as the message payload in this request using one of the content formats defined in <a href="#general_payloads" class="auto internal xref">Section 3.2</a>.
 Receivers MAY be configured to limit the accepted Content-Formats to ones that provide some level of authenticity for the MUD URL based on policy.
-However, receiver implementations MUST also support unauthenticated MUD URL transmissions if no policy forbids it.<a href="#section-3.1.2-3.3" class="pilcrow">¶</a>
+However, receiver implementations MUST also support unauthenticated MUD URL transmissions if no policy forbids it.<a href="#section-3.1.2-3.3.1" class="pilcrow">¶</a></p>
 </li>
           </ol>
 </section>
@@ -1492,15 +1473,18 @@ To accomodate for environments where authentication of MUD URLs is desired, it i
 This allows for MUD Receivers or MUD Controllers to verify the authenticity of the provided MUD URL.<a href="#section-3.2.2-1" class="pilcrow">¶</a></p>
 <p id="section-3.2.2-2">CBOR Web Tokens that contain MUD URL information have the following properties:<a href="#section-3.2.2-2" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-3.2.2-3.1">The MUD URL is contained as an ASCII-encoded string in the "mud-url" claim.<a href="#section-3.2.2-3.1" class="pilcrow">¶</a>
+<li class="normal" id="section-3.2.2-3.1">
+              <p id="section-3.2.2-3.1.1">The MUD URL is contained as an ASCII-encoded string in the "mud-url" claim.<a href="#section-3.2.2-3.1.1" class="pilcrow">¶</a></p>
 </li>
-            <li class="normal" id="section-3.2.2-3.2">The Token MAY contain proof-of-possession claims <span>[<a href="#RFC8747" class="cite xref">RFC8747</a>]</span>.
+            <li class="normal" id="section-3.2.2-3.2">
+              <p id="section-3.2.2-3.2.1">The Token MAY contain proof-of-possession claims <span>[<a href="#RFC8747" class="cite xref">RFC8747</a>]</span>.
 If it does, the MUD Receiver MUST verify that the device is in possession of the key specified in the cnf claim.
-Proof-of-Possession claims that are transmitted over CoAP without DTLS/TLS MUST represent public keys, Receivers MUST treat any symmetric keys sent over insecure channels as invalid/compromised.<a href="#section-3.2.2-3.2" class="pilcrow">¶</a>
+Proof-of-Possession claims that are transmitted over CoAP without DTLS/TLS MUST represent public keys, Receivers MUST treat any symmetric keys sent over insecure channels as invalid/compromised.<a href="#section-3.2.2-3.2.1" class="pilcrow">¶</a></p>
 </li>
-            <li class="normal" id="section-3.2.2-3.3">The Token MAY contain an expiry time.
+            <li class="normal" id="section-3.2.2-3.3">
+              <p id="section-3.2.2-3.3.1">The Token MAY contain an expiry time.
 If an expiry time is specified, the MUD URL should be resubmitted or requested again shortly before the original CWT expires.
-Note that using an expiry time could cause problems if the device is unable to perform a refresh, e.g., due to a power outage.<a href="#section-3.2.2-3.3" class="pilcrow">¶</a>
+Note that using an expiry time could cause problems if the device is unable to perform a refresh, e.g., due to a power outage.<a href="#section-3.2.2-3.3.1" class="pilcrow">¶</a></p>
 </li>
           </ul>
 <p id="section-3.2.2-4">CoAP requests and responses that use this format MUST use the Content-Format option with the value corresponding to the "application/mud-url+cwt" media type.<a href="#section-3.2.2-4" class="pilcrow">¶</a></p>
@@ -1522,15 +1506,19 @@ Both of the following procedures use the establishment of a DTLS session using t
 <a href="#section-3.3.1" class="section-number selfRef">3.3.1. </a><a href="#name-for-the-thing-initiated-flo" class="section-name selfRef">For the Thing-initiated Flow</a>
           </h4>
 <ol start="1" type="1" class="normal type-1" id="section-3.3.1-1">
-<li id="section-3.3.1-1.1">After submitting the MUD URL, the MUD Receiver parses the token.
+<li id="section-3.3.1-1.1">
+              <p id="section-3.3.1-1.1.1">After submitting the MUD URL, the MUD Receiver parses the token.
 If it detects proof-of-possession claims, the receiver MUST reply with a 4.01 (Unauthorized) CoAP response code and reject the token for now.
-If the original submission request was not performed using CoAPS, the Receiver MUST also return a set of key information that can be used to establish a CoAP+DTLS session with it, as well as a CoAPS URI indicating the location of the secured submission resource.<a href="#section-3.3.1-1.1" class="pilcrow">¶</a>
+If the original submission request was not performed using CoAPS, the Receiver MUST also return a set of key information that can be used to establish a CoAP+DTLS session with it, as well as a CoAPS URI indicating the location of the secured submission resource.<a href="#section-3.3.1-1.1.1" class="pilcrow">¶</a></p>
 </li>
-            <li id="section-3.3.1-1.2">The Thing then repeats the submission request using its own key information, the Receiver's key information, and the provided URI.<a href="#section-3.3.1-1.2" class="pilcrow">¶</a>
+            <li id="section-3.3.1-1.2">
+              <p id="section-3.3.1-1.2.1">The Thing then repeats the submission request using its own key information, the Receiver's key information, and the provided URI.<a href="#section-3.3.1-1.2.1" class="pilcrow">¶</a></p>
 </li>
-            <li id="section-3.3.1-1.3">During the DTLS handshake, the Receiver MUST require the Thing to use the proof-of-possession key included in the originally submitted token in order to successfully establish a DTLS session.<a href="#section-3.3.1-1.3" class="pilcrow">¶</a>
+            <li id="section-3.3.1-1.3">
+              <p id="section-3.3.1-1.3.1">During the DTLS handshake, the Receiver MUST require the Thing to use the proof-of-possession key included in the originally submitted token in order to successfully establish a DTLS session.<a href="#section-3.3.1-1.3.1" class="pilcrow">¶</a></p>
 </li>
-            <li id="section-3.3.1-1.4">After the DTLS handshake, the Thing has proven possession of the key included in the CWT to the MUD Receiver, which can then treat the CWT as valid.<a href="#section-3.3.1-1.4" class="pilcrow">¶</a>
+            <li id="section-3.3.1-1.4">
+              <p id="section-3.3.1-1.4.1">After the DTLS handshake, the Thing has proven possession of the key included in the CWT to the MUD Receiver, which can then treat the CWT as valid.<a href="#section-3.3.1-1.4.1" class="pilcrow">¶</a></p>
 </li>
           </ol>
 </section>
@@ -1541,13 +1529,16 @@ If the original submission request was not performed using CoAPS, the Receiver M
 <a href="#section-3.3.2" class="section-number selfRef">3.3.2. </a><a href="#name-for-the-receiver-initiated-" class="section-name selfRef">For the Receiver-initiated Flow</a>
           </h4>
 <ol start="1" type="1" class="normal type-1" id="section-3.3.2-1">
-<li id="section-3.3.2-1.1">After receiving the MUD URL from a request (e.g., a multicast request), the MUD Receiver parses the token.
-If it detects proof-of-possession claims, the receiver MUST continue with the following procedure before treating the CWT as valid.<a href="#section-3.3.2-1.1" class="pilcrow">¶</a>
+<li id="section-3.3.2-1.1">
+              <p id="section-3.3.2-1.1.1">After receiving the MUD URL from a request (e.g., a multicast request), the MUD Receiver parses the token.
+If it detects proof-of-possession claims, the receiver MUST continue with the following procedure before treating the CWT as valid.<a href="#section-3.3.2-1.1.1" class="pilcrow">¶</a></p>
 </li>
-            <li id="section-3.3.2-1.2">The receiver repeats the MUD URL request, this time using DTLS.
-During the DTLS handshake, the Receiver must require the Thing to use the proof-of-possession key included in the originally received token in order to successfully establish the DTLS session.<a href="#section-3.3.2-1.2" class="pilcrow">¶</a>
+            <li id="section-3.3.2-1.2">
+              <p id="section-3.3.2-1.2.1">The receiver repeats the MUD URL request, this time using DTLS.
+During the DTLS handshake, the Receiver must require the Thing to use the proof-of-possession key included in the originally received token in order to successfully establish the DTLS session.<a href="#section-3.3.2-1.2.1" class="pilcrow">¶</a></p>
 </li>
-            <li id="section-3.3.2-1.3">After the DTLS handshake, the Thing has proven possession of the key included in the CWT to the MUD Receiver, which can then treat the CWT as valid.<a href="#section-3.3.2-1.3" class="pilcrow">¶</a>
+            <li id="section-3.3.2-1.3">
+              <p id="section-3.3.2-1.3.1">After the DTLS handshake, the Thing has proven possession of the key included in the CWT to the MUD Receiver, which can then treat the CWT as valid.<a href="#section-3.3.2-1.3.1" class="pilcrow">¶</a></p>
 </li>
           </ol>
 </section>
@@ -1682,17 +1673,23 @@ In general, it is recommended that MUD Receivers support as much of the specific
           </h4>
 <p id="section-4.2.1-1">For the discovery process described in <a href="#general_discovery" class="auto internal xref">Section 3.4</a>, the following considerations apply to MUD Receivers:<a href="#section-4.2.1-1" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-4.2.1-2.1">MUD Receivers that support IPv6 SHOULD regularly perform a CoAP request to the "All MUD CoAP Nodes" multicast address for the <code>/.well-known/mud-url</code> URI.<a href="#section-4.2.1-2.1" class="pilcrow">¶</a>
+<li class="normal" id="section-4.2.1-2.1">
+              <p id="section-4.2.1-2.1.1">MUD Receivers that support IPv6 SHOULD regularly perform a CoAP request to the "All MUD CoAP Nodes" multicast address for the <code>/.well-known/mud-url</code> URI.<a href="#section-4.2.1-2.1.1" class="pilcrow">¶</a></p>
 </li>
-            <li class="normal" id="section-4.2.1-2.2">MUD Receivers that support IPv4 SHOULD regularly perform a CoAP request to the "All CoAP Nodes" multicast address for the <code>/.well-known/mud-url</code> URI.<a href="#section-4.2.1-2.2" class="pilcrow">¶</a>
+            <li class="normal" id="section-4.2.1-2.2">
+              <p id="section-4.2.1-2.2.1">MUD Receivers that support IPv4 SHOULD regularly perform a CoAP request to the "All CoAP Nodes" multicast address for the <code>/.well-known/mud-url</code> URI.<a href="#section-4.2.1-2.2.1" class="pilcrow">¶</a></p>
 </li>
-            <li class="normal" id="section-4.2.1-2.3">MUD Receivers that support IPv6 devices MUST join the "All MUD Receivers" IPv6 multicast group.<a href="#section-4.2.1-2.3" class="pilcrow">¶</a>
+            <li class="normal" id="section-4.2.1-2.3">
+              <p id="section-4.2.1-2.3.1">MUD Receivers that support IPv6 devices MUST join the "All MUD Receivers" IPv6 multicast group.<a href="#section-4.2.1-2.3.1" class="pilcrow">¶</a></p>
 </li>
-            <li class="normal" id="section-4.2.1-2.4">MUD Receivers that support IPv4 devices MUST join the "All CoAP Nodes" IPv4 multicast group.<a href="#section-4.2.1-2.4" class="pilcrow">¶</a>
+            <li class="normal" id="section-4.2.1-2.4">
+              <p id="section-4.2.1-2.4.1">MUD Receivers that support IPv4 devices MUST join the "All CoAP Nodes" IPv4 multicast group.<a href="#section-4.2.1-2.4.1" class="pilcrow">¶</a></p>
 </li>
-            <li class="normal" id="section-4.2.1-2.5">MUD Receivers SHOULD regularly query any CoRE Resource Directories relevant for the subnet they are responsible for.<a href="#section-4.2.1-2.5" class="pilcrow">¶</a>
+            <li class="normal" id="section-4.2.1-2.5">
+              <p id="section-4.2.1-2.5.1">MUD Receivers SHOULD regularly query any CoRE Resource Directories relevant for the subnet they are responsible for.<a href="#section-4.2.1-2.5.1" class="pilcrow">¶</a></p>
 </li>
-            <li class="normal" id="section-4.2.1-2.6">MUD Receivers SHOULD register their submission resource to any CoRE Resource Directories relevant for the subnet they are responsible for.<a href="#section-4.2.1-2.6" class="pilcrow">¶</a>
+            <li class="normal" id="section-4.2.1-2.6">
+              <p id="section-4.2.1-2.6.1">MUD Receivers SHOULD register their submission resource to any CoRE Resource Directories relevant for the subnet they are responsible for.<a href="#section-4.2.1-2.6.1" class="pilcrow">¶</a></p>
 </li>
           </ul>
 </section>
@@ -1704,12 +1701,15 @@ In general, it is recommended that MUD Receivers support as much of the specific
           </h4>
 <p id="section-4.2.2-1">This section describes the behavior for MUD Receivers regarding the Thing-initiated submission flow:<a href="#section-4.2.2-1" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-4.2.2-2.1">MUD Receivers MUST provide a submission resource under the <code>/.well-known/mud-submission</code> well-known URI.<a href="#section-4.2.2-2.1" class="pilcrow">¶</a>
+<li class="normal" id="section-4.2.2-2.1">
+              <p id="section-4.2.2-2.1.1">MUD Receivers MUST provide a submission resource under the <code>/.well-known/mud-submission</code> well-known URI.<a href="#section-4.2.2-2.1.1" class="pilcrow">¶</a></p>
 </li>
-            <li class="normal" id="section-4.2.2-2.2">MUD Receivers SHOULD include their submission resource in any CoRE Link Format descriptions of their resources (both in <code>/.well-known/core</code> and in CoRE RD registrations, if applicable).<a href="#section-4.2.2-2.2" class="pilcrow">¶</a>
+            <li class="normal" id="section-4.2.2-2.2">
+              <p id="section-4.2.2-2.2.1">MUD Receivers SHOULD include their submission resource in any CoRE Link Format descriptions of their resources (both in <code>/.well-known/core</code> and in CoRE RD registrations, if applicable).<a href="#section-4.2.2-2.2.1" class="pilcrow">¶</a></p>
 </li>
-            <li class="normal" id="section-4.2.2-2.3">MUD Receivers MAY indicate failure of MUD URL submission using a CoAP Error Code.
-If the submitted MUD URL is encoded in a CBOR Web Token including proof-of-possession claims, MUD Receivers MUST return the appropriate error code to initiate the proof of possession flow as described in <a href="#general_pop" class="auto internal xref">Section 3.3</a>.<a href="#section-4.2.2-2.3" class="pilcrow">¶</a>
+            <li class="normal" id="section-4.2.2-2.3">
+              <p id="section-4.2.2-2.3.1">MUD Receivers MAY indicate failure of MUD URL submission using a CoAP Error Code.
+If the submitted MUD URL is encoded in a CBOR Web Token including proof-of-possession claims, MUD Receivers MUST return the appropriate error code to initiate the proof of possession flow as described in <a href="#general_pop" class="auto internal xref">Section 3.3</a>.<a href="#section-4.2.2-2.3.1" class="pilcrow">¶</a></p>
 </li>
           </ul>
 </section>
@@ -1721,9 +1721,11 @@ If the submitted MUD URL is encoded in a CBOR Web Token including proof-of-posse
           </h4>
 <p id="section-4.2.3-1">This section describes considerations for MUD Receivers regarding the Receiver-initiated submission flow:<a href="#section-4.2.3-1" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-4.2.3-2.1">MUD Receivers MUST request MUD URLs from any resources known to them.<a href="#section-4.2.3-2.1" class="pilcrow">¶</a>
+<li class="normal" id="section-4.2.3-2.1">
+              <p id="section-4.2.3-2.1.1">MUD Receivers MUST request MUD URLs from any resources known to them.<a href="#section-4.2.3-2.1.1" class="pilcrow">¶</a></p>
 </li>
-            <li class="normal" id="section-4.2.3-2.2">MUD Receivers MUST re-request MUD URLs submitted as a CWT claim if the CWT has an expiry time that passed.<a href="#section-4.2.3-2.2" class="pilcrow">¶</a>
+            <li class="normal" id="section-4.2.3-2.2">
+              <p id="section-4.2.3-2.2.1">MUD Receivers MUST re-request MUD URLs submitted as a CWT claim if the CWT has an expiry time that passed.<a href="#section-4.2.3-2.2.1" class="pilcrow">¶</a></p>
 </li>
           </ul>
 </section>
@@ -1735,15 +1737,20 @@ If the submitted MUD URL is encoded in a CBOR Web Token including proof-of-posse
           </h4>
 <p id="section-4.2.4-1">Regarding the actual MUD URL payload transmitted using CoAP, the following considerations apply:<a href="#section-4.2.4-1" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-4.2.4-2.1">MUD Receivers SHOULD treat devices for which MUD URL retrieval failed as devices the same way as devices that do not provide a MUD URL at all, unless an explicit differing policy is defined.<a href="#section-4.2.4-2.1" class="pilcrow">¶</a>
+<li class="normal" id="section-4.2.4-2.1">
+              <p id="section-4.2.4-2.1.1">MUD Receivers SHOULD treat devices for which MUD URL retrieval failed as devices the same way as devices that do not provide a MUD URL at all, unless an explicit differing policy is defined.<a href="#section-4.2.4-2.1.1" class="pilcrow">¶</a></p>
 </li>
-            <li class="normal" id="section-4.2.4-2.2">MUD Receiver implementations MUST support the plain MUD URL payload, although support for these MAY be disabled by policy.<a href="#section-4.2.4-2.2" class="pilcrow">¶</a>
+            <li class="normal" id="section-4.2.4-2.2">
+              <p id="section-4.2.4-2.2.1">MUD Receiver implementations MUST support the plain MUD URL payload, although support for these MAY be disabled by policy.<a href="#section-4.2.4-2.2.1" class="pilcrow">¶</a></p>
 </li>
-            <li class="normal" id="section-4.2.4-2.3">MUD Receivers MUST support the CWT MUD URL claim.<a href="#section-4.2.4-2.3" class="pilcrow">¶</a>
+            <li class="normal" id="section-4.2.4-2.3">
+              <p id="section-4.2.4-2.3.1">MUD Receivers MUST support the CWT MUD URL claim.<a href="#section-4.2.4-2.3.1" class="pilcrow">¶</a></p>
 </li>
-            <li class="normal" id="section-4.2.4-2.4">MUD Receivers SHOULD be configured with a policy as to which signers are authorized to sign tokens.<a href="#section-4.2.4-2.4" class="pilcrow">¶</a>
+            <li class="normal" id="section-4.2.4-2.4">
+              <p id="section-4.2.4-2.4.1">MUD Receivers SHOULD be configured with a policy as to which signers are authorized to sign tokens.<a href="#section-4.2.4-2.4.1" class="pilcrow">¶</a></p>
 </li>
-            <li class="normal" id="section-4.2.4-2.5">MUD Receivers SHOULD support proof-of-possession semantics in CBOR Web Tokens and validate them before treating submitted MUD URLs using this format as valid.<a href="#section-4.2.4-2.5" class="pilcrow">¶</a>
+            <li class="normal" id="section-4.2.4-2.5">
+              <p id="section-4.2.4-2.5.1">MUD Receivers SHOULD support proof-of-possession semantics in CBOR Web Tokens and validate them before treating submitted MUD URLs using this format as valid.<a href="#section-4.2.4-2.5.1" class="pilcrow">¶</a></p>
 </li>
           </ul>
 </section>
@@ -1763,21 +1770,26 @@ Regarding CoAP specifics, <span>[<a href="#I-D.irtf-t2trg-amplification-attacks"
 Additionally, the following considerations should be taken into account.<a href="#section-5-2" class="pilcrow">¶</a></p>
 <p id="section-5-3">For Thing manufacturers that intend to implement this specification:<a href="#section-5-3" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-5-4.1">It is recommended to use CBOR Web Token-encoded MUD URLs whereever possible to allow for better integrity checking<a href="#section-5-4.1" class="pilcrow">¶</a>
+<li class="normal" id="section-5-4.1">
+          <p id="section-5-4.1.1">It is recommended to use CBOR Web Token-encoded MUD URLs whereever possible to allow for better integrity checking<a href="#section-5-4.1.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="normal" id="section-5-4.2">Using expiry times for CWTs containing MUD URLs can be advantageous, but also has its shortcomings.
+        <li class="normal" id="section-5-4.2">
+          <p id="section-5-4.2.1">Using expiry times for CWTs containing MUD URLs can be advantageous, but also has its shortcomings.
 Most notably, expiry times are not recommended if it is possible for Things to reach a state where they have neither the means to update their CWT nor a non-expired token in their persistent storage
-As devices may be out of service for longer periods of time, preventing them from refreshing CWTs, this state is unavoidable for the vast majority of devices.<a href="#section-5-4.2" class="pilcrow">¶</a>
+As devices may be out of service for longer periods of time, preventing them from refreshing CWTs, this state is unavoidable for the vast majority of devices.<a href="#section-5-4.2.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="normal" id="section-5-4.3">In order to use expiry times anyways, manufacturers could use two different CWTs: A backup CWT without an expiry time with a MUD URL pointing to a very restricted MUD file that only allows updating the main CWT, and a main CWT that has an expiry time but has a more broad MUD file referenced in it.<a href="#section-5-4.3" class="pilcrow">¶</a>
+        <li class="normal" id="section-5-4.3">
+          <p id="section-5-4.3.1">In order to use expiry times anyways, manufacturers could use two different CWTs: A backup CWT without an expiry time with a MUD URL pointing to a very restricted MUD file that only allows updating the main CWT, and a main CWT that has an expiry time but has a more broad MUD file referenced in it.<a href="#section-5-4.3.1" class="pilcrow">¶</a></p>
 </li>
       </ul>
 <p id="section-5-5">For network operators:
 Network operators SHOULD specify a policy that describes:<a href="#section-5-5" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-5-6.1">Whether to accept unauthenticated MUD URLs (those that were not submitted as part of CWTs).<a href="#section-5-6.1" class="pilcrow">¶</a>
+<li class="normal" id="section-5-6.1">
+          <p id="section-5-6.1.1">Whether to accept unauthenticated MUD URLs (those that were not submitted as part of CWTs).<a href="#section-5-6.1.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="normal" id="section-5-6.2">The keys whose signatures should be accepted by the MUD Receiver if a submission using CWTs is performed.<a href="#section-5-6.2" class="pilcrow">¶</a>
+        <li class="normal" id="section-5-6.2">
+          <p id="section-5-6.2.1">The keys whose signatures should be accepted by the MUD Receiver if a submission using CWTs is performed.<a href="#section-5-6.2.1" class="pilcrow">¶</a></p>
 </li>
       </ul>
 </section>
@@ -1788,13 +1800,17 @@ Network operators SHOULD specify a policy that describes:<a href="#section-5-5" 
 <a href="#section-6" class="section-number selfRef">6. </a><a href="#name-iana-considerations" class="section-name selfRef">IANA Considerations</a>
       </h2>
 <ul class="normal">
-<li class="normal" id="section-6-1.1">CoAP Resource Media Types Registry<a href="#section-6-1.1" class="pilcrow">¶</a>
+<li class="normal" id="section-6-1.1">
+          <p id="section-6-1.1.1">CoAP Resource Media Types Registry<a href="#section-6-1.1.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="normal" id="section-6-1.2">CoAP Content Format Registry<a href="#section-6-1.2" class="pilcrow">¶</a>
+        <li class="normal" id="section-6-1.2">
+          <p id="section-6-1.2.1">CoAP Content Format Registry<a href="#section-6-1.2.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="normal" id="section-6-1.3">well-known URI Registry<a href="#section-6-1.3" class="pilcrow">¶</a>
+        <li class="normal" id="section-6-1.3">
+          <p id="section-6-1.3.1">well-known URI Registry<a href="#section-6-1.3.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="normal" id="section-6-1.4">IPv6 Multicast Address Registry<a href="#section-6-1.4" class="pilcrow">¶</a>
+        <li class="normal" id="section-6-1.4">
+          <p id="section-6-1.4.1">IPv6 Multicast Address Registry<a href="#section-6-1.4.1" class="pilcrow">¶</a></p>
 </li>
       </ul>
 <div id="well-known-mud-url-uri">
@@ -1831,9 +1847,11 @@ Network operators SHOULD specify a policy that describes:<a href="#section-5-5" 
 <a href="#section-6.5" class="section-number selfRef">6.5. </a><a href="#name-media-types-registry" class="section-name selfRef">Media Types Registry</a>
         </h3>
 <ul class="normal">
-<li class="normal" id="section-6.5-1.1">application/mud-url+plain<a href="#section-6.5-1.1" class="pilcrow">¶</a>
+<li class="normal" id="section-6.5-1.1">
+            <p id="section-6.5-1.1.1">application/mud-url+plain<a href="#section-6.5-1.1.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-6.5-1.2">application/mud-url+cwt<a href="#section-6.5-1.2" class="pilcrow">¶</a>
+          <li class="normal" id="section-6.5-1.2">
+            <p id="section-6.5-1.2.1">application/mud-url+cwt<a href="#section-6.5-1.2.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 </section>
@@ -1844,15 +1862,18 @@ Network operators SHOULD specify a policy that describes:<a href="#section-5-5" 
 <a href="#section-6.6" class="section-number selfRef">6.6. </a><a href="#name-coap-content-format-registr" class="section-name selfRef">CoAP Content-Format Registry</a>
         </h3>
 <ul class="normal">
-<li class="normal" id="section-6.6-1.1">application/mud-url+plain<a href="#section-6.6-1.1" class="pilcrow">¶</a>
+<li class="normal" id="section-6.6-1.1">
+            <p id="section-6.6-1.1.1">application/mud-url+plain<a href="#section-6.6-1.1.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-6.6-1.2">application/mud-url+cwt<a href="#section-6.6-1.2" class="pilcrow">¶</a>
+          <li class="normal" id="section-6.6-1.2">
+            <p id="section-6.6-1.2.1">application/mud-url+cwt<a href="#section-6.6-1.2.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 </section>
 </div>
 </section>
 </div>
+<div id="sec-normative-references">
 <section id="section-7">
       <h2 id="name-normative-references">
 <a href="#section-7" class="section-number selfRef">7. </a><a href="#name-normative-references" class="section-name selfRef">Normative References</a>
@@ -1860,7 +1881,7 @@ Network operators SHOULD specify a policy that describes:<a href="#section-5-5" 
 <dl class="references">
 <dt id="I-D.irtf-t2trg-amplification-attacks">[I-D.irtf-t2trg-amplification-attacks]</dt>
       <dd>
-<span class="refAuthor">Mattsson, J. P.</span>, <span class="refAuthor">Selander, G.</span>, and <span class="refAuthor">C. Amsüss</span>, <span class="refTitle">"Amplification Attacks Using the Constrained Application Protocol (CoAP)"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-irtf-t2trg-amplification-attacks-01</span>, <time datetime="2023-01-17" class="refDate">17 January 2023</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-irtf-t2trg-amplification-attacks-01">https://datatracker.ietf.org/doc/html/draft-irtf-t2trg-amplification-attacks-01</a>&gt;</span>. </dd>
+<span class="refAuthor">Mattsson, J. P.</span>, <span class="refAuthor">Selander, G.</span>, and <span class="refAuthor">C. Amsüss</span>, <span class="refTitle">"Amplification Attacks Using the Constrained Application Protocol (CoAP)"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-irtf-t2trg-amplification-attacks-03</span>, <time datetime="2024-02-21" class="refDate">21 February 2024</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-irtf-t2trg-amplification-attacks-03">https://datatracker.ietf.org/doc/html/draft-irtf-t2trg-amplification-attacks-03</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="RFC2119">[RFC2119]</dt>
       <dd>
@@ -1900,6 +1921,7 @@ Network operators SHOULD specify a policy that describes:<a href="#section-5-5" 
 <dd class="break"></dd>
 </dl>
 </section>
+</div>
 <div id="acknowledgments">
 <section id="appendix-A">
       <h2 id="name-acknowledgments">

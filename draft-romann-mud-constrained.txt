@@ -5,7 +5,7 @@
 Network Working Group                                     J. Romann, Ed.
 Internet-Draft                                             H. Damer, Ed.
 Intended status: Informational                        Universität Bremen
-Expires: 4 September 2023                                   3 March 2023
+Expires: 28 August 2024                                 25 February 2024
 
 
                  Using MUD in Constrained Environments
@@ -15,9 +15,8 @@ Abstract
 
    This document specifies additional ways for discovering and emitting
    Manufacturer Usage Descriptions (MUD), especially in constrained
-   environments, utilizing the Constrained Application Protocol (CoAP).
-
-   TODO: Should be updated.
+   environments, utilizing the Constrained Application Protocol (CoAP),
+   CoRE Resource Discovery, and CBOR Web Tokens.
 
 About This Document
 
@@ -44,11 +43,11 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 4 September 2023.
+   This Internet-Draft will expire on 28 August 2024.
 
 Copyright Notice
 
-   Copyright (c) 2023 IETF Trust and the persons identified as the
+   Copyright (c) 2024 IETF Trust and the persons identified as the
    document authors.  All rights reserved.
 
    This document is subject to BCP 78 and the IETF Trust's Legal
@@ -120,8 +119,6 @@ Table of Contents
    which allows MUD managers to better validate the authenticity of both
    the URL itself and the associated MUD file.
 
-   The rest of this document is structured as follows: ... TODO
-
 1.1.  Terminology
 
    The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
@@ -130,10 +127,7 @@ Table of Contents
    BCP 14 [RFC2119] [RFC8174] when, and only when, they appear in all
    capitals, as shown here.
 
-   Building upon the terminology defined in [RFC8520], this
-   specification introduces the following additional terms:
-
-   TODO.  (Remove if there are no additional terms.)
+   This specification re-uses the terminology defined in [RFC8520].
 
 2.  Architecture
 
@@ -163,8 +157,6 @@ Table of Contents
    Note that the protocol used for communication between the MUD
    Receiver and MUD Manager is not specified in this document and
    implementation-specific.
-
-   TODO: Refine diagram
 
             ...................................................
             .         __________ Forward valid ____________   .
@@ -672,9 +664,9 @@ Table of Contents
               Mattsson, J. P., Selander, G., and C. Amsüss,
               "Amplification Attacks Using the Constrained Application
               Protocol (CoAP)", Work in Progress, Internet-Draft, draft-
-              irtf-t2trg-amplification-attacks-01, 17 January 2023,
+              irtf-t2trg-amplification-attacks-03, 21 February 2024,
               <https://datatracker.ietf.org/doc/html/draft-irtf-t2trg-
-              amplification-attacks-01>.
+              amplification-attacks-03>.
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
