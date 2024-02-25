@@ -70,8 +70,7 @@ authenticity of both the URL itself and the associated MUD file.
 {::boilerplate bcp14}
 
 This specification re-uses the terminology defined in {{!RFC8520}}.
-
-TODO. (Remove if there are no additional terms.)
+<!-- Additionally, it introduces following terms: TODO -->
 
 # Architecture
 
@@ -101,7 +100,7 @@ COAP GET request to a well-known URI via multicast.
 Note that the protocol used for communication between the MUD Receiver and
 MUD Manager is not specified in this document and implementation-specific.
 
-TODO: Refine diagram
+<!-- TODO: Refine diagram -->
 
 <!--
 TODO: Fix once plantuml is included in the GitHub Actions Docker image.
