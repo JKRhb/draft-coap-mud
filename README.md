@@ -2,7 +2,7 @@
 
 This is the working area for the Individual internet-draft, "Using MUD in CoAP".
 
-* [Editor's Copy](http://namib.me/draft-coap-mud/#go.draft-jimenez-t2trg-mud-coap.html)
+* [Editor's Copy](http://namib-project.github.io/draft-coap-mud/#go.draft-jimenez-t2trg-mud-coap.html)
 * [Individual Submission Draft](https://tools.ietf.org/html/draft-jimenez-t2trg-mud-coap-00)
 
 ## Building the Draft
