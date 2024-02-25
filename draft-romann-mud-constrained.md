@@ -39,9 +39,8 @@ entity:
 --- abstract
 This document specifies additional ways for discovering and emitting
 Manufacturer Usage Descriptions (MUD), especially in constrained environments,
-utilizing the Constrained Application Protocol (CoAP).
-
-TODO: Should be updated.
+utilizing the Constrained Application Protocol (CoAP), CoRE Resource Discovery,
+and CBOR Web Tokens.
 
 --- middle
 
@@ -66,15 +65,12 @@ Furthermore, this document specifies a method of encoding MUD URLs in (signed)
 CBOR Web Tokens (CWTs) {{!RFC8392}}, which allows MUD managers to better validate the
 authenticity of both the URL itself and the associated MUD file.
 
-The rest of this document is structured as follows: ... TODO
-
 ## Terminology
 
 {::boilerplate bcp14}
 
-Building upon the terminology defined in {{!RFC8520}}, this specification introduces the following additional terms:
-
-TODO. (Remove if there are no additional terms.)
+This specification re-uses the terminology defined in {{!RFC8520}}.
+<!-- Additionally, it introduces following terms: TODO -->
 
 # Architecture
 
@@ -104,7 +100,7 @@ COAP GET request to a well-known URI via multicast.
 Note that the protocol used for communication between the MUD Receiver and
 MUD Manager is not specified in this document and implementation-specific.
 
-TODO: Refine diagram
+<!-- TODO: Refine diagram -->
 
 <!--
 TODO: Fix once plantuml is included in the GitHub Actions Docker image.
@@ -306,8 +302,6 @@ A MUD manager itself MAY also act as a Resource Directory, directly applying the
 In addition to the registration endpoint defined in {{?RFC9176}}, MUD managers MAY define a separate registration interface when acting as a CoRE RD.
 
 # Obtaining a MUD URL in Constrained Environments
-
-<!-- TODO: This can probably be improved -->
 
 With the additional mechanisms for finding MUD URLs introduced in this document, MUD managers can be configured to play a more active role in discovering MUD-enabled devices.
 Furthermore, IoT devices could identify their peers based on a MUD URL associated with these devices or perform a configuration process based on the linked MUD file's contents.
